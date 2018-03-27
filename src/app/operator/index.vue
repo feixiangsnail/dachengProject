@@ -125,7 +125,7 @@ export default {
     };
   },
   created() {
-    this.getAppList();
+    this.getOperatorList();
   },
 
   methods: {
@@ -162,7 +162,7 @@ export default {
     //跳转到第几页
     changePage(currentPage) {
       this.currentPage = currentPage;
-      this.getAppList();
+      this.getOperatorList();
     },
     //编辑当前app信息
     editCurApp(scope) {
@@ -200,7 +200,7 @@ export default {
         timeout: 20000,
         success: function(d) {
           that.disableAdd = false;
-          that.getAppList();
+          that.getOperatorList();
           that.closeDialog();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -228,7 +228,7 @@ export default {
             message: "删除成功",
             duration: 1500
           });
-          that.getAppList();
+          that.getOperatorList();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           that.disableDelete = false;
@@ -252,7 +252,7 @@ export default {
         timeout: 20000,
         success: function(d) {
           that.disableUpdate = false;
-          that.getAppList();
+          that.getOperatorList();
           that.closeDialog();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -261,9 +261,9 @@ export default {
         }
       });
     },
-    //获取应用列表
-    getAppList() {
-      console.log("getAppList");
+    //获取运营商列表
+    getOperatorList() {
+      
       var that = this;
       $.ajax({
         type: "post",
@@ -275,12 +275,10 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d, "/operators/getlist_index");
           if (d.code == 99) {
             that.appData = [];
             return;
           }
-
           that.listCount = d.data.Count;
           that.appData = d.data["List"] || [];
         },

@@ -9,6 +9,10 @@
     <el-table-column prop="Port"  label="调用者端口"></el-table-column>    
   </el-table>
   <div>
+    <el-select v-if="isSuper"  v-model="selectToken" filterable placeholder="请选择" @change="getAppList">
+      <el-option v-for="item in OperatorList" :key="item.Token" :label="item.OPName" :value="item.Token">
+    </el-option>
+  </el-select>
   <el-select v-model="selectAppId" filterable placeholder="请选择" @change="getLogList">
     <el-option
       v-for="item in appList"
@@ -38,10 +42,23 @@ export default {
       listCount: null,
       logData: [],
       appList: [],
+      isSuper: true,
+      selectToken: "", //选中的运营商token
+      OperatorList: [
+        {
+          Token: "11111",
+          OPName: "xiaoma"
+        }
+      ],
       selectAppId: ""
     };
   },
   created() {
+    this.isSuper = this.$store.state.is_super;
+    this.selectToken = this.$store.state.usr_token;
+    if (this.isSuper) {
+      this.getOperatorList();
+    }
     this.getAppList();
     
   },
@@ -55,13 +72,38 @@ export default {
       this.currentPage = currentPage;
       this.getAppList();
     },
-    //获取应用列表
-    getAppList() {
-      console.log("getAppList");
+    //获取运营商列表
+    getOperatorList() {
       var that = this;
       $.ajax({
         type: "post",
         data: null,
+        url: "/operators/getlist_index",
+        dataType: "json",
+        timeout: 20000,
+        success: function(d) {
+          if (d.code == 99) {
+            that.OperatorList = [];
+            return;
+          }        
+          that.OperatorList = d.data["List"] || [];
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
+          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
+        }
+      });
+    },
+    //获取应用列表
+    getAppList() {      
+      var that = this;
+      $.ajax({
+        type: "post",
+        data: {
+          Token: this.selectToken,
+          Index: this.currentPage,
+          PageSize: this.pageSize
+        },
         url: "/application/getlist_index",
         dataType: "json",
         timeout: 20000,

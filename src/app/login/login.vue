@@ -114,7 +114,7 @@ export default {
       }
       let usr_info = JSON.stringify(usrInfo);
       that.setCookie("usr_info", usr_info,t);
-      that.$store.commit("logIn", that.userInfo.user, d.token,false);
+      //that.$store.commit("logIn", that.userInfo.user, d.token,false);
       that.$router.push({ path: "/" });
     },
     isUser() {

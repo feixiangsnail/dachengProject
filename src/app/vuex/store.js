@@ -12,6 +12,7 @@ const mutations = {
     logOut(state){
         state.operator_name = '';
         state.usr_token = '';
+        state.is_super = '';
         clearCookie('usr_info');
     },
     logIn(state,operator_name,use_token,is_super){

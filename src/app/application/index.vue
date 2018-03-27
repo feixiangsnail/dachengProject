@@ -20,7 +20,13 @@
       </template>
     </el-table-column>
   </el-table>
+    <el-select v-if="isSuper"  v-model="selectToken" filterable placeholder="请选择" @change="getAppList">
+      <el-option v-for="item in OperatorList" :key="item.Token" :label="item.OPName" :value="item.Token">
+    </el-option>
+  </el-select>
 <el-button @click="addDialog = true;" class="addNewBtn">新增</el-button>
+
+
     <el-dialog title="新增应用信息" :visible.sync="addDialog" :before-close="closeDialog" :close-on-click-modal='false'>
       <div class="editDg">
         <el-table style="width: 100%" :data="[null]">
@@ -32,11 +38,7 @@
             <el-table-column  label="应用协议类型">
               <template slot-scope="scope">
               <el-select v-model="curAppData.Type" placeholder="请选择">
-                <el-option
-                  v-for="item in applyType"
-                  :key="item"
-                  :label="item"
-                  :value="item">
+                <el-option v-for="item in applyType" :key="item" :label="item" :value="item">
                 </el-option>
               </el-select>
               </template>
@@ -120,8 +122,8 @@
 .el-pagination {
   text-align: center;
 }
-#applicationPage .el-dialog{
-  width:80%;
+#applicationPage .el-dialog {
+  width: 80%;
 }
 </style>
 <script>
@@ -129,6 +131,15 @@ import { showErrMsg, formatDate, deepClone } from "../common/utils.js";
 export default {
   data() {
     return {
+      isSuper: true,
+      selectToken: "", //选中的运营商token
+      OperatorList: [
+        //运营商列表
+        {
+          Token: "11111",
+          OPName: "xiaoma"
+        }
+      ],
       disableAdd: false,
       disableUpdate: false,
       disableDelete: false,
@@ -141,7 +152,7 @@ export default {
       curAppData: {
         OPId: "Admin",
         APId: "",
-        APName:"",
+        APName: "",
         Type: "http",
         Parameter: {
           ip: "",
@@ -157,13 +168,18 @@ export default {
     };
   },
   created() {
+    this.isSuper = this.$store.state.is_super;
+    this.selectToken = this.$store.state.usr_token;
+    if (this.isSuper) {
+      this.getOperatorList();
+    }
     this.getAppList();
   },
 
   methods: {
+    
     //格式化时间
     formatDate(t) {
-    
       return formatDate(parseInt(t.CreateTime));
     },
     //跳转到第几页
@@ -184,7 +200,7 @@ export default {
       this.curAppData = {
         OPId: "Admin",
         APId: "",
-        APName:"",
+        APName: "",
         Type: "http",
         Parameter: {
           ip: "",
@@ -208,7 +224,7 @@ export default {
         url: "/application/add",
         dataType: "json",
         timeout: 20000,
-        success: function(d) {          
+        success: function(d) {
           that.disableAdd = false;
           that.getAppList();
           that.closeDialog();
@@ -250,7 +266,7 @@ export default {
     updateCurApp() {
       var that = this;
       that.disableUpdate = true;
-     
+
       $.ajax({
         type: "post",
         data: {
@@ -277,6 +293,7 @@ export default {
       $.ajax({
         type: "post",
         data: {
+          Token: this.selectToken,
           Index: this.currentPage,
           PageSize: this.pageSize
         },
@@ -288,9 +305,31 @@ export default {
             that.appData = [];
             return;
           }
-          
+
           that.listCount = d.data.Count;
           that.appData = d.data["List"] || [];
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
+          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
+        }
+      });
+    },
+    //获取运营商列表
+    getOperatorList() {
+      var that = this;
+      $.ajax({
+        type: "post",
+        data: null,
+        url: "/operators/getlist_index",
+        dataType: "json",
+        timeout: 20000,
+        success: function(d) {
+          if (d.code == 99) {
+            that.OperatorList = [];
+            return;
+          }        
+          that.OperatorList = d.data["List"] || [];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
