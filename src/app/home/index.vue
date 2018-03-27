@@ -39,7 +39,7 @@ export default {
         '../../assets/img/admin.png',
         '../../assets/img/apply.png',
         '../../assets/img/log.png',
-        
+        '../../assets/img/chartIcon.png'
       ],
     };
   },
