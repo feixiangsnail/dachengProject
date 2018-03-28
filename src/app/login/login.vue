@@ -110,7 +110,7 @@ export default {
       let usrInfo ={
         usr_token:d.token,
         operator_name:that.userInfo.user,
-        is_super:false
+        is_super:true
       }
       let usr_info = JSON.stringify(usrInfo);
       that.setCookie("usr_info", usr_info,t);

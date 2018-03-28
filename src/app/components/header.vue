@@ -6,7 +6,8 @@
               <el-input placeholder="请输入内容"  prefix-icon="el-icon-search" v-model="hSearch">
             </el-input>
               <div class='headUserInfo'>
-                <span class="hLoginRelate hUserName" @click="editAccount">{{$store.state.operator_name}}</span>
+                <span class="hLoginRelate hUserName" @click="editAccount">{{$store.state.is_super?$store.state.operator_name+'(管理员)':$store.state.operator_name}}</span>
+                
                 <span class="hLoginRelate" @click="signUp">注册&nbsp;</span>
                 <span v-if="$store.state.usr_token" class="hLoginRelate" @click="logOut">退出&nbsp;</span>
                 <span v-else class="hLoginRelate" @click="toLogin">登录&nbsp;</span>
