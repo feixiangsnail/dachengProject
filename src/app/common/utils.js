@@ -1,3 +1,5 @@
+let pagesNum = (document.documentElement.clientHeight - 150) / 60;
+module.exports.pagesNum=pagesNum;
 export function is_weixn() {
     let ua = navigator.userAgent.toLowerCase();
     if (ua.match(/MicroMessenger/i) == "micromessenger") {
@@ -181,4 +183,4 @@ export function isPattern(name,that,word) {
     return true;
   }
 
-
+  

@@ -1,5 +1,6 @@
 <template>
 <div id="applicationPage">
+  
   <el-table :data="appData" border style="width: 100%">
     <!-- <el-table-column prop="OPId" label="运营商ID"></el-table-column> -->
     <el-table-column prop="APId" label="应用ID"></el-table-column>
@@ -20,12 +21,15 @@
       </template>
     </el-table-column>
   </el-table>
+  <div class="selectBottom">
+
+
     <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="getAppList">
       <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
     </el-option>
   </el-select>
-<el-button @click="addDialog = true;" class="addNewBtn">新增</el-button>
-
+  <el-button @click="addDialog = true;"  class="addNewBtn">新增</el-button>
+  </div>
 
     <el-dialog title="新增应用信息" :visible.sync="addDialog" :before-close="closeDialog" :close-on-click-modal='false'>
       <div class="editDg">
@@ -119,15 +123,15 @@
 </div>
 </template>
 <style>
-.el-pagination {
-  text-align: center;
+#applicationPage .addNewBtn {
+  top: 55px;
 }
 #applicationPage .el-dialog {
   width: 80%;
 }
 </style>
 <script>
-import { showErrMsg, formatDate, deepClone,isPattern} from "../common/utils.js";
+import { showErrMsg, formatDate, deepClone, isPattern,pagesNum } from "../common/utils.js";
 export default {
   data() {
     return {
@@ -138,7 +142,7 @@ export default {
       disableUpdate: false,
       disableDelete: false,
       currentPage: 1,
-      pageSize: 2,
+      pageSize: pagesNum,
       listCount: null,
       addDialog: false,
       editDialog: false,
@@ -171,7 +175,6 @@ export default {
   },
 
   methods: {
-    
     //格式化时间
     formatDate(t) {
       return formatDate(parseInt(t.CreateTime));
@@ -208,11 +211,11 @@ export default {
     },
     //添加新应用
     addNewApp() {
-      if(!isPattern(this.curAppData.APName,this,'应用名称')) return;
+      if (!isPattern(this.curAppData.APName, this, "应用名称")) return;
       var that = this;
       that.disableAdd = true;
       this.curAppData.OPId = this.selectOPId;
-     
+
       $.ajax({
         type: "post",
         data: {
@@ -261,7 +264,7 @@ export default {
     },
     //修改选中应用
     updateCurApp() {
-      if(!isPattern(this.curAppData.APName,this,'应用名称')) return;
+      if (!isPattern(this.curAppData.APName, this, "应用名称")) return;
       var that = this;
       that.disableUpdate = true;
       $.ajax({
@@ -297,18 +300,15 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d,'dddddddddd')
           if (d.code == 99) {
             that.appData = [];
             return;
           }
-          console.log(d.data,'d.data')
-          that.listCount = d.data.Count;
           that.appData = d.data["List"] || [];
+          that.listCount = d.data["List"].length;
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
         }
       });
     },
@@ -325,12 +325,11 @@ export default {
           if (d.code == 99) {
             that.OperatorList = [];
             return;
-          }        
+          }
           that.OperatorList = d.data["List"] || [];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
         }
       });
     }

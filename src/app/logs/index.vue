@@ -9,18 +9,20 @@
     <el-table-column prop="Port"  label="调用者端口"></el-table-column>    
   </el-table>
   <div>
-    <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="getAppList">
-      <el-option v-for="(item,index) in OperatorList" :key="index" :label="item.OPName" :value="item.OPId">
-    </el-option>
-  </el-select>
-  <el-select v-model="selectAppId" filterable placeholder="请选择" @change="getLogList">
-    <el-option
-      v-for="(item,index) in appList"
-      :key="index" 
-      :label="item.APName"
-      :value="item.APId">
-    </el-option>
-  </el-select>
+        <div class="selectBottom">
+        <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="getAppList">
+          <el-option v-for="(item,index) in OperatorList" :key="index" :label="item.OPName" :value="item.OPId">
+        </el-option>
+      </el-select>
+      <el-select v-model="selectAppId" filterable placeholder="请选择" @change="getLogList">
+        <el-option
+          v-for="(item,index) in appList"
+          :key="index" 
+          :label="item.APName"
+          :value="item.APId">
+        </el-option>
+      </el-select>
+      </div>
   </div>
 <el-pagination background v-show="listCount" layout="prev, pager, next" :total="listCount"
 @current-change="changePage" :current-page="currentPage" :page-size="pageSize"
@@ -28,17 +30,17 @@
 </div>
 </template>
 <style>
-.el-pagination {
+/* .el-pagination {
   text-align: center;
-}
+} */
 </style>
 <script>
-import { showErrMsg, formatDate } from "../common/utils.js";
+import { showErrMsg, formatDate, pagesNum } from "../common/utils.js";
 export default {
   data() {
     return {
       currentPage: 1,
-      pageSize: 2,
+      pageSize: pagesNum,
       listCount: null,
       logData: [],
       appList: [],
@@ -55,7 +57,6 @@ export default {
       this.getOperatorList();
     }
     this.getAppList();
-    
   },
   methods: {
     //格式化时间
@@ -80,17 +81,16 @@ export default {
           if (d.code == 99) {
             that.OperatorList = [];
             return;
-          }        
+          }
           that.OperatorList = d.data["List"] || [];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-       
         }
       });
     },
     //获取应用列表
-    getAppList() {      
+    getAppList() {
       var that = this;
       $.ajax({
         type: "post",
@@ -103,26 +103,22 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-        
           if (d.code == 99) {
-            that.selectAppId ='';
+            that.selectAppId = "";
             that.appList = [];
             return;
           }
           that.appList = d.data["List"] || [];
-          that.selectAppId = d.data['List'][0].APId;
-          
+          that.selectAppId = d.data["List"][0].APId;
 
           that.getLogList();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-         
         }
       });
     },
     getLogList() {
-     
       var that = this;
       $.ajax({
         type: "post",
@@ -135,7 +131,6 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-        
           if (d.code == 99) {
             that.logData = [];
             return;
@@ -145,7 +140,6 @@ export default {
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-        
         }
       });
     }

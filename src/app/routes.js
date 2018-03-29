@@ -29,9 +29,8 @@ router.beforeEach((to, from, next) => {
             state.usr_token = usr_info.usr_token;
             state.operator_name = usr_info.operator_name;
             state.is_super = usr_info.is_super;
-            
-             state.OPId = usr_info.OPId;
-            // console.log(user_info,'user_info')
+            state.userId = usr_info.userId;
+            state.OPId = usr_info.OPId;
             if (to.meta.requiresAuth && (!state.is_super)) {
                 next({ path: '/application' })
             } else {

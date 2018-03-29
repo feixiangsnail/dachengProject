@@ -27,6 +27,7 @@
 
 <script>
 import header from "../components/header.vue";
+
 export default {
   data() {
     return {

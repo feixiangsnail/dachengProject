@@ -90,14 +90,16 @@ export default {
         success: function(d) {
           that.unLogin = true;
           if (!d.code) {
-           console.log(d,'dddddddddd')
+            console.log(d.data._id,'dddddddd')
             var t = that.saveLogin ? 1 : undefined; //是否1天免登录
             let usrInfo = {
               usr_token: d.data.Token,
               operator_name: that.userInfo.user,
               is_super: d.data.Is_Super,
-              OPId:d.data.OPId
+              OPId:d.data.OPId,
+              userId:d.data._id
             };
+           
             let usr_info = JSON.stringify(usrInfo);
             that.setCookie("usr_info", usr_info, t);
             that.$router.push({ path: "/" });

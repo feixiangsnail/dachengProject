@@ -1,18 +1,22 @@
 <template>
 <div id="operatorPage">
+  
   <el-table :data="appData" border style="width: 100%">
     <el-table-column prop="OPId" label="运营商ID"></el-table-column>   
     <el-table-column prop="OPName" label="运营商名称"></el-table-column>
     <el-table-column prop="OPIntro" label="运营商介绍"> </el-table-column>
     <el-table-column prop="CreateTime" :formatter="formatDate"  label="创建时间"> </el-table-column>
     <el-table-column label="操作" width="150">
+      
       <template slot-scope="scope" >       
         <el-button size="mini" @click="editCurApp(scope)">编辑</el-button>
         <el-button size="mini" type="danger" @click="deleteCurApp(scope)" :disabled="disableDelete">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
-<el-button @click="addDialog = true;" class="addNewBtn">新增</el-button>
+   <div class="selectBottom">
+<el-button @click="addDialog = true;"   class="addNewBtn">新增</el-button>
+</div>
     <el-dialog title="新增应用信息" :visible.sync="addDialog" :before-close="closeDialog"  :close-on-click-modal='false'>
       <div class="editDg">
         <el-table style="width: 100%" :data="[null]">
@@ -79,9 +83,6 @@
 </div>
 </template>
 <style>
-.el-pagination {
-  text-align: center;
-}
 #operatorPage .el-dialog {
   width: 80%;
 }
@@ -91,7 +92,12 @@
 }
 </style>
 <script>
-import { showErrMsg, formatDate, deepClone} from "../common/utils.js";
+import {
+  showErrMsg,
+  formatDate,
+  deepClone,
+  pagesNum
+} from "../common/utils.js";
 export default {
   data() {
     return {
@@ -100,7 +106,7 @@ export default {
       disableUpdate: false,
       disableDelete: false,
       currentPage: 1,
-      pageSize: 2,
+      pageSize: pagesNum,
       listCount: null,
       addDialog: false,
       editDialog: false,
@@ -236,7 +242,7 @@ export default {
         }
       });
     },
-    //修改选中应用
+    //修改选中运营商
     updateCurApp() {
       if (!this.isUser()) return;
       if (!this.isPwd()) return;
@@ -251,6 +257,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          console.log(d,'ddddd')
           that.disableUpdate = false;
           that.getOperatorList();
           that.closeDialog();
@@ -278,7 +285,7 @@ export default {
             that.appData = [];
             return;
           }
-          console.log(d.data['List'],'list')
+          console.log(d.data["List"], "list");
           that.listCount = d.data.Count;
           that.appData = d.data["List"] || [];
         },

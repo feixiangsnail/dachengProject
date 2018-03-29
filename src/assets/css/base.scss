@@ -55,3 +55,19 @@ input[type="button"], input[type="submit"], input[type="reset"] {
 }
 textarea {  -webkit-appearance: none;}   
 .button{ border-radius: 0; } 
+
+.el-pagination {
+  position: fixed;
+  margin: auto;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.selectBottom{
+  position: fixed;
+  margin: auto;
+  bottom: 30px;
+  left: 200px;
+  z-index:1002;
+}

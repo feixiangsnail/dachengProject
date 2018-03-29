@@ -15,9 +15,9 @@
            
         </div>
         <el-dialog title="修改个人资料" :visible.sync="editDialog" :before-close="closeDialog" :close-on-click-modal='false'>
-          <el-input v-model="userInfo.user" placeholder="请输入用户名"></el-input>
-          <el-input v-model="userInfo.password" placeholder="请输入密码"></el-input>
-          <el-button type="primary" round @click="saveUserInfo">保存</el-button>
+          <el-input v-model="userInfo.OPName" placeholder="请输入用户名"></el-input>
+          <el-input v-model="userInfo.OPPwd" type="password" placeholder="请输入密码"></el-input>
+          <el-button type="primary" round @click="saveUserInfo" :disabled="unLogin">保存</el-button>
           <div class="errorBox">
             {{errInfo}}
           </div>
@@ -27,16 +27,23 @@
   </div>
 </template>
 <script>
+import {
+  setCookie,
+  getCookie,
+  clearCookie,
+  showErrMsg
+} from "../common/utils.js";
 export default {
   props: {
     user: {}
   },
   data() {
     return {
-      userInfo: '',
+      userInfo: "",
       editDialog: false,
       hSearch: "",
-      errInfo: ""
+      errInfo: "",
+      unLogin: false
     };
   },
   methods: {
@@ -44,50 +51,44 @@ export default {
       if (!this.isUser()) return;
       if (!this.isPwd()) return;
       var that = this;
-      this.unLogin = false;
-      // $.ajax({
-      //   type: "post",
-      //   data: this.userInfo,
-      //   url: "/operators/login",
-      //   dataType: "json",
-      //   timeout: 10000,
-      //   success: function(d) {
-      //     that.unLogin = true;
-      //     if (!d.code) {
-      //       var t = that.saveLogin ? 1 : undefined; //是否1天免登录
-      //       console.log(t, "ttt");
-      //       that.setCookie("operator_name", that.userInfo.user, t);
-      //       that.setCookie("usr_token", d.token, t);
-      //       that.$store.commit("logIn", that.userInfo.user, d.token);
-      //       that.$router.push({ path: "/" });
-      //     } else {
-      //       that.$message.error(d.message + "失败码:" + d.code);
-      //     }
-      //   },
-      //   error: function(XMLHttpRequest, textStatus, errorThrown) {
-      //     that.unLogin = true;
-      //     showErrMsg(that, textStatus);
-      //   }
-      // });
-      var d = { token: "hahahah" };
-      var t = that.saveLogin ? 1 : undefined; //是否1天免登录
-      let usrObj = {
-        usr_token: d.token,
-        operator_name: that.userInfo.user,
-        is_super: true
-      };
-      let usr_info = JSON.stringify(usrObj);
-      that.setCookie("usr_info", usr_info, t);
-      //that.$store.commit("logIn", that.userInfo.user, d.token,false);
-      //that.$router.push({ path: "/" });
+      this.unLogin = true;
+      $.ajax({
+        type: "post",
+        data: {
+          Operators: this.userInfo
+        },
+        url: "operators/update",
+        dataType: "json",
+        timeout: 20000,
+        success: function(d) {
+          console.log(d,'ddddd')
+          that.unLogin = false;
+          let user_info = JSON.parse(getCookie("usr_info"));
+          user_info.operator_name=that.userInfo.OPName;
+          let newUserInfo = JSON.stringify(user_info)
+          setCookie("usr_info",newUserInfo);
+          that.closeDialog();
+          that.$router.push('/');
+
+
+
+
+
+
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          that.unLogin = false;
+          showErrMsg(that, textStatus);
+        }
+      });
     },
     isUser() {
       var pattern = /^\S{3,20}$/g;
-      if (this.userInfo.user === "") {
+      if (this.userInfo.OPName === "") {
         this.errInfo = "用户名不能为空";
         return false;
       }
-      if (!pattern.test(this.userInfo.user)) {
+      if (!pattern.test(this.userInfo.OPName)) {
         this.errInfo = "用户名应为3-20个非空白字符";
         return false;
       }
@@ -96,11 +97,11 @@ export default {
     },
     isPwd() {
       var pattern = /^\S{3,20}$/g;
-      if (this.userInfo.password === "") {
+      if (this.userInfo.OPPwd === "") {
         this.errInfo = "密码不能为空";
         return false;
       }
-      if (!pattern.test(this.userInfo.password)) {
+      if (!pattern.test(this.userInfo.OPPwd)) {
         this.errInfo = "密码应为3-20个非空白字符";
         return false;
       }
@@ -109,19 +110,28 @@ export default {
     },
     editAccount() {
       this.editDialog = true;
-      this.userInfo = {
-        user: this.$store.state.operator_name,        
-        oldToken: this.$store.state.usr_token,
-        is_super:this.$store.state.usr_token,
-        password: ''
-      }
+      var that = this;
+      $.ajax({
+        type: "post",
+        data: { token: this.$store.state.usr_token },
+        url: "/operators/login_token",
+        dataType: "json",
+        timeout: 10000,
+        success: function(d) {
+          that.userInfo = d.data;
+          
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          that.unLogin = false;
+          showErrMsg(that, textStatus);
+        }
+      });
     },
     closeDialog() {
       this.editDialog = false;
-      this.userInfo = ''
+      this.userInfo = "";
     },
     signUp() {
-     
       this.$router.push({ path: "/signup" });
     },
     toLogin() {
