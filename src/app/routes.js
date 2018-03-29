@@ -25,9 +25,13 @@ router.beforeEach((to, from, next) => {
         let state = router.app.$options.store.state;
         try {
             let usr_info = JSON.parse(getCookie('usr_info'));
+            
             state.usr_token = usr_info.usr_token;
             state.operator_name = usr_info.operator_name;
             state.is_super = usr_info.is_super;
+            
+             state.OPId = usr_info.OPId;
+            // console.log(user_info,'user_info')
             if (to.meta.requiresAuth && (!state.is_super)) {
                 next({ path: '/application' })
             } else {
@@ -35,6 +39,7 @@ router.beforeEach((to, from, next) => {
             }
         }
         catch (err) {
+            console.log(err,'err')
             state.usr_token = '';
             state.operator_name = '';
             state.is_super = '';

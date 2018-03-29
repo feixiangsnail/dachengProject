@@ -6,7 +6,8 @@ const state ={
     count:32,
     operator_name:'',
     usr_token:'',
-    is_super:''
+    is_super:'',
+    OPId:''
 }
 const mutations = {
     logOut(state){

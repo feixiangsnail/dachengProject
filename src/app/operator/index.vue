@@ -91,7 +91,7 @@
 }
 </style>
 <script>
-import { showErrMsg, formatDate, deepClone } from "../common/utils.js";
+import { showErrMsg, formatDate, deepClone} from "../common/utils.js";
 export default {
   data() {
     return {
@@ -263,7 +263,6 @@ export default {
     },
     //获取运营商列表
     getOperatorList() {
-      
       var that = this;
       $.ajax({
         type: "post",
@@ -279,6 +278,7 @@ export default {
             that.appData = [];
             return;
           }
+          console.log(d.data['List'],'list')
           that.listCount = d.data.Count;
           that.appData = d.data["List"] || [];
         },

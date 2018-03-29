@@ -9,14 +9,14 @@
     <el-table-column prop="Port"  label="调用者端口"></el-table-column>    
   </el-table>
   <div>
-    <el-select v-if="isSuper"  v-model="selectToken" filterable placeholder="请选择" @change="getAppList">
-      <el-option v-for="item in OperatorList" :key="item.Token" :label="item.OPName" :value="item.Token">
+    <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="getAppList">
+      <el-option v-for="(item,index) in OperatorList" :key="index" :label="item.OPName" :value="item.OPId">
     </el-option>
   </el-select>
   <el-select v-model="selectAppId" filterable placeholder="请选择" @change="getLogList">
     <el-option
-      v-for="item in appList"
-      :key="item.APId"
+      v-for="(item,index) in appList"
+      :key="index" 
       :label="item.APName"
       :value="item.APId">
     </el-option>
@@ -43,19 +43,14 @@ export default {
       logData: [],
       appList: [],
       isSuper: true,
-      selectToken: "", //选中的运营商token
-      OperatorList: [
-        {
-          Token: "11111",
-          OPName: "xiaoma"
-        }
-      ],
+      selectOPId: "", //选中的运营商token
+      OperatorList: [],
       selectAppId: ""
     };
   },
   created() {
     this.isSuper = this.$store.state.is_super;
-    this.selectToken = this.$store.state.usr_token;
+    this.selectOPId = this.$store.state.OPId;
     if (this.isSuper) {
       this.getOperatorList();
     }
@@ -90,7 +85,7 @@ export default {
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
+       
         }
       });
     },
@@ -100,7 +95,7 @@ export default {
       $.ajax({
         type: "post",
         data: {
-          Token: this.selectToken,
+          OPId: this.selectOPId,
           Index: this.currentPage,
           PageSize: this.pageSize
         },
@@ -108,25 +103,26 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+        
           if (d.code == 99) {
+            that.selectAppId ='';
             that.appList = [];
             return;
           }
           that.appList = d.data["List"] || [];
           that.selectAppId = d.data['List'][0].APId;
-          console.log(that.appList,'applist')
+          
 
           that.getLogList();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
+         
         }
       });
     },
     getLogList() {
-      console.log(this.selectAppId,',this.selectAppId')
-      console.log("getLogList");
+     
       var that = this;
       $.ajax({
         type: "post",
@@ -139,16 +135,17 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d,'ddddd')
+        
           if (d.code == 99) {
             that.logData = [];
             return;
           }
+          that.listCount = d.data.Count;
           that.logData = d.data["List"] || [];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
+        
         }
       });
     }

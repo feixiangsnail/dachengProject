@@ -168,8 +168,17 @@ export function deepClone(obj) {
     return newobj
 }
 
-
-
-
+export function isPattern(name,that,word) {
+    var pattern = /^\S{3,20}$/g;
+    if (name === "") {
+        that.$message({ showClose: true, message:word+"不能为空", duration: 1000 });
+       return false;
+    }
+    if (!pattern.test(name)) {
+        that.$message({ showClose: true, message:word+"应为3-20个非空白字符", duration: 1000});
+        return false;
+    }
+    return true;
+  }
 
 

@@ -81,41 +81,45 @@ export default {
       if (!this.isPwd()) return;
       var that = this;
       this.unLogin = false;
-      // $.ajax({
-      //   type: "post",
-      //   data: this.userInfo,
-      //   url: "/operators/login",
-      //   dataType: "json",
-      //   timeout: 10000,
-      //   success: function(d) {
-      //     that.unLogin = true;
-      //     if (!d.code) {
-      //       var t = that.saveLogin ? 1 : undefined; //是否1天免登录
-      //       console.log(t, "ttt");
-      //       that.setCookie("operator_name", that.userInfo.user, t);
-      //       that.setCookie("usr_token", d.token, t);
-      //       that.$store.commit("logIn", that.userInfo.user, d.token);
-      //       that.$router.push({ path: "/" });
-      //     } else {
-      //       that.$message.error(d.message + "失败码:" + d.code);
-      //     }
-      //   },
-      //   error: function(XMLHttpRequest, textStatus, errorThrown) {
-      //     that.unLogin = true;
-      //     showErrMsg(that, textStatus);
-      //   }
-      // });
-      var d = {token:'hahahah'}
-      var t = that.saveLogin? 1: undefined; //是否1天免登录
-      let usrInfo ={
-        usr_token:d.token,
-        operator_name:that.userInfo.user,
-        is_super:true
-      }
-      let usr_info = JSON.stringify(usrInfo);
-      that.setCookie("usr_info", usr_info,t);
-      //that.$store.commit("logIn", that.userInfo.user, d.token,false);
-      that.$router.push({ path: "/" });
+      $.ajax({
+        type: "post",
+        data: this.userInfo,
+        url: "/operators/login",
+        dataType: "json",
+        timeout: 10000,
+        success: function(d) {
+          that.unLogin = true;
+          if (!d.code) {
+           console.log(d,'dddddddddd')
+            var t = that.saveLogin ? 1 : undefined; //是否1天免登录
+            let usrInfo = {
+              usr_token: d.data.Token,
+              operator_name: that.userInfo.user,
+              is_super: d.data.Is_Super,
+              OPId:d.data.OPId
+            };
+            let usr_info = JSON.stringify(usrInfo);
+            that.setCookie("usr_info", usr_info, t);
+            that.$router.push({ path: "/" });
+          } else {
+            that.$message.error(d.message + "失败码:" + d.code);
+          }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          that.unLogin = true;
+          showErrMsg(that, textStatus);
+        }
+      });
+      // var d = {token:'hahahah'}
+      // var t = that.saveLogin? 1: undefined; //是否1天免登录
+      // let usrInfo ={
+      //   usr_token:d.token,
+      //   operator_name:that.userInfo.user,
+      //   is_super:true
+      // }
+      // let usr_info = JSON.stringify(usrInfo);
+      // that.setCookie("usr_info", usr_info,t);
+      // that.$router.push({ path: "/" });
     },
     isUser() {
       var pattern = /^\S{3,20}$/g;

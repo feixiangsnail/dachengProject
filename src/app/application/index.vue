@@ -20,8 +20,8 @@
       </template>
     </el-table-column>
   </el-table>
-    <el-select v-if="isSuper"  v-model="selectToken" filterable placeholder="请选择" @change="getAppList">
-      <el-option v-for="item in OperatorList" :key="item.Token" :label="item.OPName" :value="item.Token">
+    <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="getAppList">
+      <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
     </el-option>
   </el-select>
 <el-button @click="addDialog = true;" class="addNewBtn">新增</el-button>
@@ -38,7 +38,7 @@
             <el-table-column  label="应用协议类型">
               <template slot-scope="scope">
               <el-select v-model="curAppData.Type" placeholder="请选择">
-                <el-option v-for="item in applyType" :key="item" :label="item" :value="item">
+                <el-option v-for="item in applyType" :label="item" :value="item">
                 </el-option>
               </el-select>
               </template>
@@ -127,19 +127,13 @@
 }
 </style>
 <script>
-import { showErrMsg, formatDate, deepClone } from "../common/utils.js";
+import { showErrMsg, formatDate, deepClone,isPattern} from "../common/utils.js";
 export default {
   data() {
     return {
       isSuper: true,
-      selectToken: "", //选中的运营商token
-      OperatorList: [
-        //运营商列表
-        {
-          Token: "11111",
-          OPName: "xiaoma"
-        }
-      ],
+      selectOPId: "", //选中的运营商OPId
+      OperatorList: [],
       disableAdd: false,
       disableUpdate: false,
       disableDelete: false,
@@ -150,10 +144,10 @@ export default {
       editDialog: false,
       applyType: ["http", "tcp", "udp"],
       curAppData: {
-        OPId: "Admin",
+        OPId: "",
         APId: "",
         APName: "",
-        Type: "http",
+        Type: "",
         Parameter: {
           ip: "",
           port: "",
@@ -169,7 +163,7 @@ export default {
   },
   created() {
     this.isSuper = this.$store.state.is_super;
-    this.selectToken = this.$store.state.usr_token;
+    this.selectOPId = this.$store.state.OPId;
     if (this.isSuper) {
       this.getOperatorList();
     }
@@ -201,7 +195,7 @@ export default {
         OPId: "Admin",
         APId: "",
         APName: "",
-        Type: "http",
+        Type: "",
         Parameter: {
           ip: "",
           port: "",
@@ -214,8 +208,11 @@ export default {
     },
     //添加新应用
     addNewApp() {
+      if(!isPattern(this.curAppData.APName,this,'应用名称')) return;
       var that = this;
       that.disableAdd = true;
+      this.curAppData.OPId = this.selectOPId;
+     
       $.ajax({
         type: "post",
         data: {
@@ -264,9 +261,9 @@ export default {
     },
     //修改选中应用
     updateCurApp() {
+      if(!isPattern(this.curAppData.APName,this,'应用名称')) return;
       var that = this;
       that.disableUpdate = true;
-
       $.ajax({
         type: "post",
         data: {
@@ -288,12 +285,11 @@ export default {
     },
     //获取应用列表
     getAppList() {
-      console.log("getAppList");
       var that = this;
       $.ajax({
         type: "post",
         data: {
-          Token: this.selectToken,
+          OPId: this.selectOPId,
           Index: this.currentPage,
           PageSize: this.pageSize
         },
@@ -301,11 +297,12 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          console.log(d,'dddddddddd')
           if (d.code == 99) {
             that.appData = [];
             return;
           }
-
+          console.log(d.data,'d.data')
           that.listCount = d.data.Count;
           that.appData = d.data["List"] || [];
         },

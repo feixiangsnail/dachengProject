@@ -87,20 +87,20 @@ export default {
 
       echarts.init(this.$refs.appCalls).setOption({
          title: {
-                text: 'ECharts 入门示例'
+                text: '应用调用次数'
             },
             tooltip: {},
             legend: {
-                data:['销量']
+                data:['用户调用次数']
             },
             xAxis: {
-                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
+                data: ["微信", "知乎", "支付宝", "QQ", "网易云音乐"]
             },
             yAxis: {},
             series: [{
                 name: '销量',
                 type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
+                data: [33, 90, 36, 10,  20]
             }]
       });
     }
