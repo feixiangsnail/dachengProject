@@ -5,7 +5,8 @@ function Config(){
         '/operators/*':{},
         '/application/*':{},
         '/applicationrecord/*':{},   
-        '/manager/*':{},   
+        '/manager/*':{},  
+        '/statistics/*':{},  
         '/*/*':{},        
     }
 

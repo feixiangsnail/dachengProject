@@ -88,9 +88,10 @@ export default {
         dataType: "json",
         timeout: 10000,
         success: function(d) {
+          console.log(d,'dlogin')
           that.unLogin = true;
           if (!d.code) {
-            console.log(d.data._id,'dddddddd')
+            
             var t = that.saveLogin ? 1 : undefined; //是否1天免登录
             let usrInfo = {
               usr_token: d.data.Token,
@@ -112,16 +113,21 @@ export default {
           showErrMsg(that, textStatus);
         }
       });
-      // var d = {token:'hahahah'}
-      // var t = that.saveLogin? 1: undefined; //是否1天免登录
-      // let usrInfo ={
-      //   usr_token:d.token,
-      //   operator_name:that.userInfo.user,
-      //   is_super:true
-      // }
-      // let usr_info = JSON.stringify(usrInfo);
-      // that.setCookie("usr_info", usr_info,t);
-      // that.$router.push({ path: "/" });
+      // var d ={data: {Token:'hahahah',Is_Super:true,OPId:123,_id:6}};
+      //       console.log(d.data._id,'dddddddd')
+      //       var t = that.saveLogin ? 1 : undefined; //是否1天免登录
+      //       let usrInfo = {
+      //         usr_token: d.data.Token,
+      //         operator_name: that.userInfo.user,
+      //         is_super: d.data.Is_Super,
+      //         OPId:d.data.OPId,
+      //         userId:d.data._id
+      //       };
+           
+      //       let usr_info = JSON.stringify(usrInfo);
+      //       that.setCookie("usr_info", usr_info, t);
+      //       that.$router.push({ path: "/" });
+
     },
     isUser() {
       var pattern = /^\S{3,20}$/g;

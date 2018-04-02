@@ -42,7 +42,7 @@
             <el-table-column  label="应用协议类型">
               <template slot-scope="scope">
               <el-select v-model="curAppData.Type" placeholder="请选择">
-                <el-option v-for="item in applyType" :label="item" :value="item">
+                <el-option v-for="item in applyType" :label="item" :value="item" >
                 </el-option>
               </el-select>
               </template>
@@ -131,13 +131,19 @@
 }
 </style>
 <script>
-import { showErrMsg, formatDate, deepClone, isPattern,pagesNum } from "../common/utils.js";
+import {
+  showErrMsg,
+  formatDate,
+  deepClone,
+  isPattern,
+  pagesNum
+} from "../common/utils.js";
 export default {
   data() {
     return {
-      isSuper: true,
+      isSuper: true,//是否超级管理员
       selectOPId: "", //选中的运营商OPId
-      OperatorList: [],
+      OperatorList: [],//运营商列表
       disableAdd: false,
       disableUpdate: false,
       disableDelete: false,
@@ -215,17 +221,24 @@ export default {
       var that = this;
       that.disableAdd = true;
       this.curAppData.OPId = this.selectOPId;
-
+  
       $.ajax({
         type: "post",
         data: {
-          Application: this.curAppData
+          Application: this.curAppData,
+          token:this.$store.state.usr_token
         },
         url: "/application/add",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          console.log(d,'addnewapp')
           that.disableAdd = false;
+           if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           that.getAppList();
           that.closeDialog();
         },
@@ -242,13 +255,19 @@ export default {
       $.ajax({
         type: "post",
         data: {
-          APId: this.appData[scope.$index].APId
+          APId: this.appData[scope.$index].APId,
+          token:this.$store.state.usr_token
         },
         url: "application/remove",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
           that.disableDelete = false;
+           if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           that.$message({
             showClose: true,
             message: "删除成功",
@@ -270,12 +289,18 @@ export default {
       $.ajax({
         type: "post",
         data: {
-          Application: this.curAppData
+          Application: this.curAppData,
+          token:this.$store.state.usr_token
         },
         url: "application/update",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           that.disableUpdate = false;
           that.getAppList();
           that.closeDialog();
@@ -286,6 +311,7 @@ export default {
         }
       });
     },
+    
     //获取应用列表
     getAppList() {
       var that = this;
@@ -294,12 +320,18 @@ export default {
         data: {
           OPId: this.selectOPId,
           Index: this.currentPage,
-          PageSize: this.pageSize
+          PageSize: parseInt(this.pageSize),
+          token:this.$store.state.usr_token
         },
         url: "/application/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+           if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           if (d.code == 99) {
             that.appData = [];
             return;
@@ -327,6 +359,8 @@ export default {
             return;
           }
           that.OperatorList = d.data["List"] || [];
+          console.log(that.OperatorList,'that.OperatorList')
+          console.log(that.$store.state.OPId,'that.$store.state.OPId')
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);

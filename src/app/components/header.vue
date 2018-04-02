@@ -61,20 +61,14 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d,'ddddd')
+          console.log(d, "ddddd");
           that.unLogin = false;
           let user_info = JSON.parse(getCookie("usr_info"));
-          user_info.operator_name=that.userInfo.OPName;
-          let newUserInfo = JSON.stringify(user_info)
-          setCookie("usr_info",newUserInfo);
+          user_info.operator_name = that.userInfo.OPName;
+          let newUserInfo = JSON.stringify(user_info);
+          setCookie("usr_info", newUserInfo);
           that.closeDialog();
-          that.$router.push('/');
-
-
-
-
-
-
+          that.$router.push("/");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           that.unLogin = false;
@@ -118,8 +112,9 @@ export default {
         dataType: "json",
         timeout: 10000,
         success: function(d) {
-          that.userInfo = d.data;
-          
+          console.log(d,'ddddd')
+          that.userInfo = d.data || {};
+          console.log(that.userInfo,'userinfo')
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           that.unLogin = false;

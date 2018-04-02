@@ -1,5 +1,5 @@
 let pagesNum = (document.documentElement.clientHeight - 150) / 60;
-module.exports.pagesNum=pagesNum;
+module.exports.pagesNum=parseInt(pagesNum);
 export function is_weixn() {
     let ua = navigator.userAgent.toLowerCase();
     if (ua.match(/MicroMessenger/i) == "micromessenger") {

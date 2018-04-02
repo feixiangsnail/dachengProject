@@ -6,10 +6,11 @@
  */
 import axios from 'axios';
 import Vue from 'vue';
-
+import store from '../vuex/store.js'
 // 添加一个请求拦截器
 let deposit = [];
 axios.interceptors.request.use(config => {
+   
     return config;
 }, function (error) {
     // Do something with request error
@@ -17,6 +18,7 @@ axios.interceptors.request.use(config => {
 })
 // 添加一个响应拦截器
 axios.interceptors.response.use(response => {
+    
     // deposit[response.config.url] = false;
     // if(response.data.returncode){
     //     if(response.config.isMessage)
@@ -28,7 +30,7 @@ axios.interceptors.response.use(response => {
     //         return [{isSign:true}];
     //     return Promise.reject(response.data);
     // }
-    return response.data.data
+    return response.data
 }, function (error) {
     return Promise.reject(error)
 })

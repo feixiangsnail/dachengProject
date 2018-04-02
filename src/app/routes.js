@@ -10,13 +10,15 @@ const router = new VueRouter({
                 { path: '/', component: resolve => require(['./operator/index.vue'], resolve), name: '运行商注册管理', meta: { requiresAuth: true } },
                 { path: '/index', component: resolve => require(['./operator/index.vue'], resolve), name: '运营商注册管理',  meta: { requiresAuth: true } },
                 { path: '/application', component: resolve => require(['./application/index.vue'], resolve), name: '应用管理' },
-                { path: '/logs', component: resolve => require(['./logs/index.vue'], resolve), name: '日志管理' },
+                { path: '/logs', component: resolve => require(['./logs/index.vue'], resolve), name: '日志管理' },                
                 { path: '/charts', component: resolve => require(['./charts/index.vue'], resolve), name: '应用统计' },
+                { path: '/logsearch', component: resolve => require(['./logs/logsearch.vue'], resolve), name: '日志查询' },
             ]
         },
         { path: '/login', component: resolve => require(['./login/login.vue'], resolve), name: '登录' },
         { path: '/signup', component: resolve => require(['./login/signup.vue'], resolve), name: '注册' },
         { path: '/test', component: resolve => require(['./test/index.vue'], resolve), name: '测试页' },
+        
     ]
 });
 router.beforeEach((to, from, next) => {

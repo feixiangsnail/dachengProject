@@ -118,16 +118,7 @@ export default {
         CreateTime: "",
         Token: ""
       },
-      appData: [
-        {
-          OPId: "2",
-          OPName: "3",
-          OPPwd: "4",
-          OPIntro: "5",
-          CreateTime: Date.now(),
-          Token: ""
-        }
-      ]
+      appData: []
     };
   },
   created() {
@@ -196,16 +187,23 @@ export default {
       if (!this.isPwd()) return;
       var that = this;
       that.disableAdd = true;
+
       $.ajax({
         type: "post",
         data: {
-          Operators: this.curAppData
+          Operators: this.curAppData,
+          token:this.$store.state.usr_token
         },
         url: "/operators/add",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
           that.disableAdd = false;
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           that.getOperatorList();
           that.closeDialog();
         },
@@ -222,13 +220,19 @@ export default {
       $.ajax({
         type: "post",
         data: {
-          OPId: this.appData[scope.$index].OPId
+          OPId: this.appData[scope.$index].OPId,
+          token:this.$store.state.usr_token
         },
         url: "operators/remove",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
           that.disableDelete = false;
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           that.$message({
             showClose: true,
             message: "删除成功",
@@ -251,14 +255,19 @@ export default {
       $.ajax({
         type: "post",
         data: {
-          Operators: this.curAppData
+          Operators: this.curAppData,
+          token:this.$store.state.usr_token
         },
         url: "operators/update",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d,'ddddd')
           that.disableUpdate = false;
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           that.getOperatorList();
           that.closeDialog();
         },
@@ -275,12 +284,18 @@ export default {
         type: "post",
         data: {
           Index: this.currentPage,
-          PageSize: this.pageSize
+          PageSize: parseInt(this.pageSize),
+          token:this.$store.state.usr_token
         },
         url: "/operators/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           if (d.code == 99) {
             that.appData = [];
             return;
@@ -293,7 +308,41 @@ export default {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
           console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
         }
+      });$.ajax({
+        type: "post",
+        data: {
+          Index: this.currentPage,
+          PageSize: parseInt(this.pageSize),
+          token:this.$store.state.usr_token
+        },
+        url: "/operators/getlist_index",
+        dataType: "json",
+        timeout: 20000,
+        success: function(d) {
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
+          if (d.code == 99) {
+            that.appData = [];
+            return;
+          }
+        
+          that.listCount = d.data.Count;
+          that.appData = d.data["List"] || [];
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
+          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
+        }
       });
+      // this.$http.p("/operators/getlist_index",{ Index: this.currentPage,PageSize: this.pageSize}).then(function(res){
+      //     console.log(res,'res');
+      //   })
+      //   .catch(function(err){
+      //     console.log(err,'err');
+      //   });
     }
   }
 };

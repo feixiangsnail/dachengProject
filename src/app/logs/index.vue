@@ -66,7 +66,7 @@ export default {
     //跳转到第几页
     changePage(currentPage) {
       this.currentPage = currentPage;
-      this.getAppList();
+      this.getLogList();
     },
     //获取运营商列表
     getOperatorList() {
@@ -78,6 +78,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          
           if (d.code == 99) {
             that.OperatorList = [];
             return;
@@ -97,12 +98,18 @@ export default {
         data: {
           OPId: this.selectOPId,
           Index: this.currentPage,
-          PageSize: this.pageSize
+          PageSize: parseInt(this.pageSize),
+          token:this.$store.state.usr_token
         },
         url: "/application/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           if (d.code == 99) {
             that.selectAppId = "";
             that.appList = [];
@@ -124,13 +131,19 @@ export default {
         type: "post",
         data: {
           Index: this.currentPage,
-          PageSize: this.pageSize,
-          APId: this.selectAppId
+          PageSize: parseInt(this.pageSize),
+          APId: this.selectAppId,
+          token:this.$store.state.usr_token
         },
         url: "/applicationrecord/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          if(d.code ==55){
+            showErrMsg(that,55, 'token验证失效，请重新登录')
+            that.$router.push({ path: "/login" });
+            return;
+          }
           if (d.code == 99) {
             that.logData = [];
             return;
