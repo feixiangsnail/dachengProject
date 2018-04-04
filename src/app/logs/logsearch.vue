@@ -1,8 +1,6 @@
 <template>
 <div id="operatorPage">
   <el-table border style="width: 100%" :data="[null]">
-   
-   
     <el-table-column  label="访问时间">
        <template slot-scope="scope">
           <el-date-picker
