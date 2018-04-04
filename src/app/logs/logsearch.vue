@@ -28,7 +28,7 @@
    
       <el-table-column  label="操作" >
               <template slot-scope="scope">
-                <el-button type="primary" @click="searchLog" :disabled="disableSearch">
+                <el-button type="primary" @click="search" :disabled="disableSearch">
                   查询
                 </el-button>
               </template>
@@ -85,7 +85,10 @@ export default {
 
       this.searchLog();
     },
-
+    search(){
+      this.currentPage = 1;
+      this.searchLog();
+    },
     searchLog() {
       //  this.disableSearch = true;
       var that = this;

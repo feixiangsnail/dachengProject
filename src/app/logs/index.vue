@@ -14,7 +14,7 @@
           <el-option v-for="(item,index) in OperatorList" :key="index" :label="item.OPName" :value="item.OPId">
         </el-option>
       </el-select>
-      <el-select v-model="selectAppId" filterable placeholder="请选择" @change="getLogList">
+      <el-select v-model="selectAppId" filterable placeholder="请选择" @change="selectApp">
         <el-option
           v-for="(item,index) in appList"
           :key="index" 
@@ -68,6 +68,10 @@ export default {
       this.currentPage = currentPage;
       this.getLogList();
     },
+    selectApp(){
+      this.currentPage =1;
+      this.getLogList();
+    },
     //获取运营商列表
     getOperatorList() {
       var that = this;
@@ -97,8 +101,6 @@ export default {
         type: "post",
         data: {
           OPId: this.selectOPId,
-          Index: this.currentPage,
-          PageSize: parseInt(this.pageSize),
           token:this.$store.state.usr_token
         },
         url: "/application/getlist_index",
@@ -117,7 +119,7 @@ export default {
           }
           that.appList = d.data["List"] || [];
           that.selectAppId = d.data["List"][0].APId;
-
+          that.currentPage = 1;
           that.getLogList();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {

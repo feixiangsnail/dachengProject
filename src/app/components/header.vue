@@ -3,12 +3,13 @@
     <header class="clearfix">
         <div class="logoTitle" @click="toTest">身份认证平台</div>
         <div class="headRight clearfix">
-              <el-input placeholder="请输入内容"  prefix-icon="el-icon-search" v-model="hSearch">
-            </el-input>
+              <!-- <el-input placeholder="请输入内容"  prefix-icon="el-icon-search" v-model="hSearch">
+            </el-input> -->
               <div class='headUserInfo'>
                 <span class="hLoginRelate hUserName" @click="editAccount">{{$store.state.operator_name}}</span>
                 <span v-if="$store.state.is_super">(管理员)</span>
-                <span class="hLoginRelate" @click="signUp">注册&nbsp;</span>
+                <!-- <span  class="hLoginRelate" @click="signUp">注册&nbsp;</span> -->
+                  &nbsp;&nbsp;&nbsp;&nbsp;
                 <span v-if="$store.state.usr_token" class="hLoginRelate" @click="logOut">退出&nbsp;</span>
                 <span v-else class="hLoginRelate" @click="toLogin">登录&nbsp;</span>
               </div>

@@ -15,7 +15,7 @@ export function barGraph(config) {
         yAxis: {},
         series: [
             {
-                name: "销量",
+                name: "次数",
                 type: "bar",
                 data: config.yData
             }
@@ -46,6 +46,7 @@ export function lineGraph(config) {
     }
 };
 export function pieGraph(config) {
+    console.log(config,'piedata')
     return {
         title: {
             text: config.title,
@@ -60,7 +61,7 @@ export function pieGraph(config) {
             orient: "vertical",
             x: "left",
             y:'bottom',
-            data: config.opinion
+            data: config.pieData
         },
         series: [
             {

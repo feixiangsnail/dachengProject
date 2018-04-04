@@ -24,7 +24,7 @@
   <div class="selectBottom">
 
 
-    <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="getAppList">
+    <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="changeOperator">
       <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
     </el-option>
   </el-select>
@@ -50,17 +50,64 @@
             <el-table-column  label="应用协议参数">
                 <el-table-column label="ip地址">
                     <template slot-scope="scope">
-                      <el-input v-model="curAppData.Parameter.ip" placeholder="请输入内容"></el-input> 
+                      <!-- <el-input v-model="curAppData.Parameter.ip" placeholder="请输入内容"></el-input>  -->
+
+  <el-select v-model="curAppData.Parameter.ip" placeholder="请选择" allow-create 
+    filterable>
+      <el-option v-for="item in ids" :value="item">
+    </el-option>
+  </el-select>
+
+
+
+
+
+
+
+
+
+
+
+
+
                     </template> 
                 </el-table-column>
                 <el-table-column label="端口号">
                     <template slot-scope="scope">
                       <el-input v-model="curAppData.Parameter.port" placeholder="请输入内容"></el-input>  
+
+
+
+
+
+
+
+
+
+
+
                     </template> 
                 </el-table-column>
                 <el-table-column label="路由地址" v-if="curAppData.Type=='http' ">
                     <template slot-scope="scope" >
-                      <el-input v-model="curAppData.Parameter.path" placeholder="请输入内容"></el-input>  
+                      <!-- <el-input v-model="curAppData.Parameter.path" placeholder="请输入内容"></el-input>   -->
+
+
+          <el-select v-model="curAppData.Parameter.path" placeholder="请选择" allow-create 
+              filterable>
+                <el-option v-for="item in paths" :key="item" :value="item">
+              </el-option>
+            </el-select>
+
+
+
+
+
+
+
+
+
+
                     </template>               
                 </el-table-column>
             </el-table-column>
@@ -85,7 +132,7 @@
               <el-select v-model="curAppData.Type" placeholder="请选择">
                 <el-option
                   v-for="item in applyType"
-                  :key="item"
+                  
                   :label="item"
                   :value="item">
                 </el-option>
@@ -95,7 +142,10 @@
             <el-table-column  label="应用协议参数" >
                 <el-table-column label="ip地址">
                     <template slot-scope="scope">
-                      <el-input v-model="curAppData.Parameter.ip" placeholder="请输入内容"></el-input> 
+                       <el-select v-model="curAppData.Parameter.ip" placeholder="请选择" allow-create  filterable>
+                                <el-option v-for="item in ids"  :value="item">
+                              </el-option>
+                            </el-select>
                     </template> 
                 </el-table-column>
                 <el-table-column label="端口号">
@@ -105,7 +155,11 @@
                 </el-table-column>
                 <el-table-column label="路由路径" v-if="curAppData.Type=='http' ">
                     <template slot-scope="scope" >
-                      <el-input v-model="curAppData.Parameter.path" placeholder="请输入内容"></el-input>  
+                       <el-select v-model="curAppData.Parameter.path" placeholder="请选择" allow-create 
+              filterable>
+                <el-option v-for="item in paths"  :value="item">
+              </el-option>
+            </el-select>
                     </template>               
                 </el-table-column>
             </el-table-column>
@@ -141,9 +195,11 @@ import {
 export default {
   data() {
     return {
-      isSuper: true,//是否超级管理员
+      ids: [111, 222, 333],
+      paths: ["path1", "path2"],
+      isSuper: true, //是否超级管理员
       selectOPId: "", //选中的运营商OPId
-      OperatorList: [],//运营商列表
+      OperatorList: [], //运营商列表
       disableAdd: false,
       disableUpdate: false,
       disableDelete: false,
@@ -174,6 +230,7 @@ export default {
   created() {
     this.isSuper = this.$store.state.is_super;
     this.selectOPId = this.$store.state.OPId;
+    this.getHistoryIpPath();
     if (this.isSuper) {
       this.getOperatorList();
     }
@@ -185,9 +242,38 @@ export default {
     formatDate(t) {
       return formatDate(parseInt(t.CreateTime));
     },
+    getHistoryIpPath(){
+      let that = this;
+      $.ajax({
+        type: "post",
+        data: null,
+        url: "/application/gethistory",
+        dataType: "json",
+        timeout: 20000,
+        success: function(d) {
+          
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
+            that.$router.push({ path: "/login" });
+            return;
+          }
+          that.ids = d.data.Ip || [];
+          that.paths = d.data.Path || [];
+          console.log(d,'ddddhistory')
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+         
+          showErrMsg(that, textStatus);
+        }
+      });
+    },
     //跳转到第几页
     changePage(currentPage) {
       this.currentPage = currentPage;
+      this.getAppList();
+    },
+    changeOperator() {
+      this.currentPage = 1;
       this.getAppList();
     },
     //编辑当前app信息
@@ -221,21 +307,21 @@ export default {
       var that = this;
       that.disableAdd = true;
       this.curAppData.OPId = this.selectOPId;
-  
+
       $.ajax({
         type: "post",
         data: {
           Application: this.curAppData,
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "/application/add",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d,'addnewapp')
+          console.log(d, "addnewapp");
           that.disableAdd = false;
-           if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -256,15 +342,15 @@ export default {
         type: "post",
         data: {
           APId: this.appData[scope.$index].APId,
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "application/remove",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
           that.disableDelete = false;
-           if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -290,14 +376,14 @@ export default {
         type: "post",
         data: {
           Application: this.curAppData,
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "application/update",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -311,7 +397,7 @@ export default {
         }
       });
     },
-    
+
     //获取应用列表
     getAppList() {
       var that = this;
@@ -321,14 +407,14 @@ export default {
           OPId: this.selectOPId,
           Index: this.currentPage,
           PageSize: parseInt(this.pageSize),
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "/application/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-           if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -336,8 +422,9 @@ export default {
             that.appData = [];
             return;
           }
+          console.log()
           that.appData = d.data["List"] || [];
-          that.listCount = d.data["List"].length;
+          that.listCount = d.data["Count"];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
@@ -359,8 +446,8 @@ export default {
             return;
           }
           that.OperatorList = d.data["List"] || [];
-          console.log(that.OperatorList,'that.OperatorList')
-          console.log(that.$store.state.OPId,'that.$store.state.OPId')
+          console.log(that.OperatorList, "that.OperatorList");
+          console.log(that.$store.state.OPId, "that.$store.state.OPId");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);

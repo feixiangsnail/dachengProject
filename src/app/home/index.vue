@@ -1,4 +1,7 @@
 <template>
+<div id="home">
+
+
     <el-row class="container" style="height: 100%">
     <v-header :user="user"></v-header>
     <el-col :span="24" class="main">
@@ -6,8 +9,8 @@
         <el-menu :default-active="$route.path"  router>
           <template v-for="(item,index) in $router.options.routes[0].children.slice(1)">
             <el-menu-item :index="item.path" :key="item.path" v-show="item.name!='运营商注册管理'||$store.state.is_super">
-              <div class="menuIcon">
-                <img :src="iconList[index]" alt="">
+              <div class="menuIcon" :class="iconList[index]">
+               
               </div>
               {{item.name}}</el-menu-item>
           </template>
@@ -22,7 +25,7 @@
       </el-row>
     </el-col>
   </el-row>
-
+</div>
 </template>
 
 <script>
@@ -37,10 +40,11 @@ export default {
         identity:''
       },
       iconList:[
-        '../../assets/img/admin.png',
-        '../../assets/img/apply.png',
-        '../../assets/img/log.png',
-        '../../assets/img/chartIcon.png'
+        'admin',
+        'apply',
+        'log',
+        'chartIcon',
+        'logSearch'
       ],
     };
   },
@@ -53,7 +57,31 @@ export default {
 };
 </script>
 <style>
+#home .admin {
+  background: url(../../assets/img/admin.png) no-repeat center;
+  background-size: 100% 100%;
 
+}
+#home .apply {
+  background: url(../../assets/img/apply.png) no-repeat center;
+  background-size: 100% 100%;
+
+}
+#home .log {
+  background: url(../../assets/img/log.png) no-repeat center;
+  background-size: 100% 100%;
+
+}
+#home .chartIcon {
+  background: url(../../assets/img/chartIcon.png) no-repeat center;
+  background-size: 100% 100%;
+
+}
+#home .logSearch {
+  background: url(../../assets/img/logSearch.png) no-repeat center;
+  background-size: 100% 100%;
+
+}
 .menu,.el-menu {
   height: 100%;
   background-color: #4f6070;
@@ -62,6 +90,22 @@ export default {
   width:160px;
   color:#fff;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .container {
   height: 100%;

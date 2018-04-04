@@ -53,7 +53,12 @@ export default {
       appTop10Today: [],
       appTop10Month: [],
       concurrency: [],
-      operatorTop10: []
+      operatorTop10: [
+        {name:'aa',value:1},
+        {name:'a2',value:2},
+        {name:'a3',value:3},
+
+      ]
     };
   },
   mounted() {
@@ -86,43 +91,13 @@ export default {
           })
         );
     },
-    getIpTop10Today() {
-      var that = this;
-      $.ajax({
-        type: "post",
-        data: {
-          type: 1
-        },
-        url: "/statistics/top10/ipvisit",
-        dataType: "json",
-        timeout: 20000,
-        success: function(d) {
-          if (d.code == 55) {
-            showErrMsg(that, 55, "token验证失效，请重新登录");
-            that.$router.push({ path: "/login" });
-            return;
-          }
-          if (d.code == 99) {
-            that.appData = [];
-            return;
-          }
-          that.ipTop10Month = d.data || [];
-          that.$nextTick(function() {
-            that.drawPie();
-          });
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-        }
-      });
-    },
-
+   
     drawPie() {
       echarts.init(this.$refs.ipTop10Today).setOption(
         barGraph({
           title: "今日top10IP访问排行(次数)",
-          xData: this.ipTop10Today.map(x => x.name),
-          yData: this.ipTop10Today.map(y => y.value)
+          xData: this.ipTop10Today.map(x =>  x["_id"]),
+          yData: this.ipTop10Today.map(y => y["count"])
         })
       );
 
@@ -136,28 +111,29 @@ export default {
       echarts.init(this.$refs.appTop10Today).setOption(
         barGraph({
           title: "今日top10 应用访问排行(次数)",
-          xData: this.ipTop10Today.map(x => x.name),
-          yData: this.ipTop10Today.map(y => y.value)
+          xData: this.appTop10Today.map(x => x["_id"]),
+          yData: this.appTop10Today.map(y => y["count"])
         })
       );
       echarts.init(this.$refs.appTop10Month).setOption(
         barGraph({
           title: "本月top10 应用访问排行(次数)",
-          xData: this.ipTop10Today.map(x => x.name),
-          yData: this.ipTop10Today.map(y => y.value)
+          xData: this.appTop10Month.map(x => x["_id"]),
+          yData: this.appTop10Month.map(y => y["count"])
         })
       );
       echarts.init(this.$refs.concurrency).setOption(
         lineGraph({
           title: "当前并发量（5秒次数统计/5）",
-          xData: this.xData,
-          yData: this.yData
+          xData: [-15,-10,-5,0],
+          yData:this.concurrency || [5,2,4,8]
         })
       );
+      
       echarts.init(this.$refs.operatorTop10).setOption(
         pieGraph({
           title: "top10 应用商应用数量统计",
-          pieData: this.ipTop10Today
+          pieData: this.operatorTop10
         })
       );
     }

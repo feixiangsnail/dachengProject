@@ -11,6 +11,7 @@ import store from '../vuex/store.js'
 let deposit = [];
 axios.interceptors.request.use(config => {
    
+  
     return config;
 }, function (error) {
     // Do something with request error
