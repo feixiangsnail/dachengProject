@@ -1,7 +1,24 @@
 <template>
 <div id="applicationPage">
+  <p class="tit">
+    应用管理
+  </p>
+  <div class="handleBox clearfix">
+    <div class="selectLeft">
+          
+
+
+    <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="changeOperator">
+      <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
+    </el-option>
+  </el-select>
+  <el-button @click="addDialog = true;" type="primary"  class="addNewBtn">新增</el-button>
   
-  <el-table :data="appData" border style="width: 100%">
+    </div>
+ <search-header :search="searchHeaderList" :starttime="starttime" :endtime="endtime" :keywords="keywords"></search-header>
+  </div>
+ 
+  <el-table :data="appData" style="width: 100%">
     <!-- <el-table-column prop="OPId" label="运营商ID"></el-table-column> -->
     <el-table-column prop="APId" label="应用ID"></el-table-column>
     <el-table-column prop="APName" label="应用名称"></el-table-column>
@@ -21,15 +38,7 @@
       </template>
     </el-table-column>
   </el-table>
-  <div class="selectBottom">
 
-
-    <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="changeOperator">
-      <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
-    </el-option>
-  </el-select>
-  <el-button @click="addDialog = true;"  class="addNewBtn">新增</el-button>
-  </div>
 
     <el-dialog title="新增应用信息" :visible.sync="addDialog" :before-close="closeDialog" :close-on-click-modal='false'>
       <div class="editDg">
@@ -59,38 +68,16 @@
   </el-select>
 
 
-
-
-
-
-
-
-
-
-
-
-
                     </template> 
                 </el-table-column>
                 <el-table-column label="端口号">
                     <template slot-scope="scope">
                       <el-input v-model="curAppData.Parameter.port" placeholder="请输入内容"></el-input>  
-
-
-
-
-
-
-
-
-
-
-
                     </template> 
                 </el-table-column>
                 <el-table-column label="路由地址" v-if="curAppData.Type=='http' ">
                     <template slot-scope="scope" >
-                      <!-- <el-input v-model="curAppData.Parameter.path" placeholder="请输入内容"></el-input>   -->
+                     
 
 
           <el-select v-model="curAppData.Parameter.path" placeholder="请选择" allow-create 
@@ -98,16 +85,6 @@
                 <el-option v-for="item in paths" :key="item" :value="item">
               </el-option>
             </el-select>
-
-
-
-
-
-
-
-
-
-
                     </template>               
                 </el-table-column>
             </el-table-column>
@@ -183,6 +160,10 @@
 #applicationPage .el-dialog {
   width: 80%;
 }
+#applicationPage .handleBox {
+  height: 50px;
+}
+
 </style>
 <script>
 import {
@@ -195,6 +176,9 @@ import {
 export default {
   data() {
     return {
+      keywords: "",
+      starttime: "",
+      endtime: "",
       ids: [111, 222, 333],
       paths: ["path1", "path2"],
       isSuper: true, //是否超级管理员
@@ -227,6 +211,9 @@ export default {
       appData: []
     };
   },
+  components: {
+    SearchHeader: require("../components/searchHeader.vue")
+  },
   created() {
     this.isSuper = this.$store.state.is_super;
     this.selectOPId = this.$store.state.OPId;
@@ -238,11 +225,14 @@ export default {
   },
 
   methods: {
+    searchHeaderList() {
+      console.log("chaxun");
+    },
     //格式化时间
     formatDate(t) {
       return formatDate(parseInt(t.CreateTime));
     },
-    getHistoryIpPath(){
+    getHistoryIpPath() {
       let that = this;
       $.ajax({
         type: "post",
@@ -251,7 +241,6 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
@@ -259,10 +248,9 @@ export default {
           }
           that.ids = d.data.Ip || [];
           that.paths = d.data.Path || [];
-          console.log(d,'ddddhistory')
+          console.log(d, "ddddhistory");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-         
           showErrMsg(that, textStatus);
         }
       });
@@ -422,7 +410,7 @@ export default {
             that.appData = [];
             return;
           }
-          console.log()
+          console.log();
           that.appData = d.data["List"] || [];
           that.listCount = d.data["Count"];
         },

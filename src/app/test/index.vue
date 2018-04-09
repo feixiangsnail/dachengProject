@@ -1,44 +1,51 @@
 <template>
-  <el-select v-model="value" placeholder="请选择" allow-create 
-    filterable>
+<div>
+
+
+  <el-select
+    v-model="value10.id"
+    filterable
+    allow-create
+    default-first-option
+    placeholder="请选择文章标签">
     <el-option
-      v-for="item in options"
+      v-for="item in options5"
       :key="item.value"
       :label="item.label"
-      
       :value="item.value">
     </el-option>
   </el-select>
+
+ <el-button type="primary" @click="print">主要按钮</el-button>
+
+
+
+
+
+  </div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
+  export default {
+    data() {
+      return {
+        options5: [{
+          value: 'HTML',
+          label: 'HTML'
+        }, {
+          value: 'CSS',
+          label: 'CSS'
+        }, {
+          value: 'JavaScript',
+          label: 'JavaScript'
+        }],
+        value10:{id:'6'}
+      }
+    },
+    methods:{
+        print(){
+            console.log(this.value10,'value10')
         }
-      ],
-      value: "选项5" // 选取默认值在里面就可以了，比如：  value:"选项2"；
-    };
+    }
   }
-};
 </script>

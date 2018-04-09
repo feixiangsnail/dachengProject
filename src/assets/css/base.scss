@@ -64,10 +64,18 @@ textarea {  -webkit-appearance: none;}
   right: 0;
   text-align: center;
 }
-.selectBottom{
-  position: fixed;
-  margin: auto;
-  bottom: 30px;
-  left: 200px;
-  z-index:1002;
+
+.selectLeft{
+  float:left;
+}
+.tit {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.el-table th,.el-table thead.is-group th{
+  background:#cde9ff;
+  font-size:14px;
+  font-weight:500;
+ color:black;
 }

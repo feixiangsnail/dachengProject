@@ -1,0 +1,20 @@
+export default{
+    data(){
+        return{
+            selectInterface:'',
+            interfaceList:[
+                {
+                    label:'接口1',
+                    value:'inerface1'
+                }
+            ],
+            inerfaceAdress:'接口地址',
+            callResult:'hi'
+        }
+    },
+    methods:{
+        downloadDemo(){
+            console.log('downloadDemo')
+        }
+    }
+}

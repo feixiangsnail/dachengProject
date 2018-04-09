@@ -81,40 +81,17 @@ export default {
       if (!this.isPwd()) return;
       var that = this;
       this.unLogin = false;
-      $.ajax({
-        type: "post",
-        data: this.userInfo,
-        url: "/operators/login",
-        dataType: "json",
-        timeout: 10000,
-        success: function(d) {
-          console.log(d,'dlogin')
-          that.unLogin = true;
-          if (!d.code) {
+      // $.ajax({
+      //   type: "post",
+      //   data: this.userInfo,
+      //   url: "/operators/login",
+      //   dataType: "json",
+      //   timeout: 10000,
+      //   success: function(d) {
+      //     console.log(d,'dlogin')
+      //     that.unLogin = true;
+      //     if (!d.code) {
             
-            var t = that.saveLogin ? 1 : undefined; //是否1天免登录
-            let usrInfo = {
-              usr_token: d.data.Token,
-              operator_name: that.userInfo.user,
-              is_super: d.data.Is_Super,
-              OPId:d.data.OPId,
-              userId:d.data._id
-            };
-           
-            let usr_info = JSON.stringify(usrInfo);
-            that.setCookie("usr_info", usr_info, t);
-            that.$router.push({ path: "/" });
-          } else {
-            that.$message.error(d.message + "失败码:" + d.code);
-          }
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          that.unLogin = true;
-          showErrMsg(that, textStatus);
-        }
-      });
-      // var d ={data: {Token:'hahahah',Is_Super:true,OPId:123,_id:6}};
-      //       console.log(d.data._id,'dddddddd')
       //       var t = that.saveLogin ? 1 : undefined; //是否1天免登录
       //       let usrInfo = {
       //         usr_token: d.data.Token,
@@ -127,6 +104,29 @@ export default {
       //       let usr_info = JSON.stringify(usrInfo);
       //       that.setCookie("usr_info", usr_info, t);
       //       that.$router.push({ path: "/" });
+      //     } else {
+      //       that.$message.error(d.message + "失败码:" + d.code);
+      //     }
+      //   },
+      //   error: function(XMLHttpRequest, textStatus, errorThrown) {
+      //     that.unLogin = true;
+      //     showErrMsg(that, textStatus);
+      //   }
+      // });
+      var d ={data: {Token:'hahahah',Is_Super:true,OPId:123,_id:6}};
+            console.log(d.data._id,'dddddddd')
+            var t = that.saveLogin ? 1 : undefined; //是否1天免登录
+            let usrInfo = {
+              usr_token: d.data.Token,
+              operator_name: that.userInfo.user,
+              is_super: d.data.Is_Super,
+              OPId:d.data.OPId,
+              userId:d.data._id
+            };
+           
+            let usr_info = JSON.stringify(usrInfo);
+            that.setCookie("usr_info", usr_info, t);
+            that.$router.push({ path: "/" });
 
     },
     isUser() {
@@ -170,8 +170,8 @@ export default {
 .logo {
   background: url(../../assets/img/logo.png) no-repeat center;
   background-size: 100% 100%;
-  width: 6%;
-  height: 11vh;
+  width: 80px;
+  height: 80px;
   margin: 16vh auto 0;
 }
 .loginTitle {

@@ -1,6 +1,10 @@
 <template>
 <div id="operatorPage">
-  <el-table border style="width: 100%" :data="[null]">
+  <p class="tit">
+    日志查询
+  </p>
+  <search-header :search="searchHeaderList" :starttime="starttime" :endtime="endtime" :keywords="keywords"></search-header>
+  <el-table style="width: 100%" :data="[null]">
     <el-table-column  label="访问时间">
        <template slot-scope="scope">
           <el-date-picker
@@ -58,6 +62,9 @@ console.log(pagesNum - 2, "pagesnum");
 export default {
   data() {
     return {
+      keywords: "",
+      starttime: "",
+      endtime: "",
       disableSearch: false,
       currentPage: 1,
       pageSize: pagesNum - 2,
@@ -73,8 +80,13 @@ export default {
       key: ""
     };
   },
-
+  components: {
+    SearchHeader: require("../components/searchHeader.vue")
+  },
   methods: {
+    searchHeaderList(){
+      console.log('chaxun')
+    },
     //格式化时间
     formatDate(t) {
       return formatDate(parseInt(t.VisitTime));
@@ -85,7 +97,7 @@ export default {
 
       this.searchLog();
     },
-    search(){
+    search() {
       this.currentPage = 1;
       this.searchLog();
     },

@@ -1,7 +1,5 @@
 <template>
 <div id="home">
-
-
     <el-row class="container" style="height: 100%">
     <v-header :user="user"></v-header>
     <el-col :span="24" class="main">
@@ -42,9 +40,10 @@ export default {
       iconList:[
         'admin',
         'apply',
-        'log',
+        'logSearch',
         'chartIcon',
-        'logSearch'
+        'interfaceIcon',
+        'opslog'
       ],
     };
   },
@@ -67,7 +66,7 @@ export default {
   background-size: 100% 100%;
 
 }
-#home .log {
+#home .opslog {
   background: url(../../assets/img/log.png) no-repeat center;
   background-size: 100% 100%;
 
@@ -79,6 +78,11 @@ export default {
 }
 #home .logSearch {
   background: url(../../assets/img/logSearch.png) no-repeat center;
+  background-size: 100% 100%;
+
+}
+#home .interfaceIcon {
+  background: url(../../assets/img/interfaceIcon.png) no-repeat center;
   background-size: 100% 100%;
 
 }

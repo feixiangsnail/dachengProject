@@ -1,7 +1,14 @@
 <template>
 <div id="operatorPage">
+    <p class="tit">
+    服务申请商管理
+  </p>
+  <div class="clearfix">
+<el-button @click="addDialog = true;" type="primary"   class="addNewBtn">新增</el-button>
+<search-header :search="searchHeaderList" :starttime="starttime" :endtime="endtime" :keywords="keywords"></search-header>
+  </div>
   
-  <el-table :data="appData" border style="width: 100%">
+  <el-table :data="appData"  style="width: 100%">
     <el-table-column prop="OPId" label="运营商ID"></el-table-column>   
     <el-table-column prop="OPName" label="运营商名称"></el-table-column>
     <el-table-column prop="OPIntro" label="运营商介绍"> </el-table-column>
@@ -15,7 +22,7 @@
     </el-table-column>
   </el-table>
    <div class="selectBottom">
-<el-button @click="addDialog = true;"   class="addNewBtn">新增</el-button>
+
 </div>
     <el-dialog title="新增应用信息" :visible.sync="addDialog" :before-close="closeDialog"  :close-on-click-modal='false'>
       <div class="editDg">
@@ -90,6 +97,7 @@
   text-align: center;
   color: red;
 }
+
 </style>
 <script>
 import {
@@ -101,6 +109,9 @@ import {
 export default {
   data() {
     return {
+      keywords: "",
+      starttime: "",
+      endtime: "",
       errInfo: "",
       disableAdd: false,
       disableUpdate: false,
@@ -121,11 +132,17 @@ export default {
       appData: []
     };
   },
+  components: {
+    SearchHeader: require("../components/searchHeader.vue")
+  },
   created() {
     this.getOperatorList();
   },
 
   methods: {
+    searchHeaderList() {
+      console.log("chaxun");
+    },
     isUser() {
       var pattern = /^\S{3,20}$/g;
       if (this.curAppData.OPName === "") {
@@ -192,15 +209,15 @@ export default {
         type: "post",
         data: {
           Operators: this.curAppData,
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "/operators/add",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
           that.disableAdd = false;
-          if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -221,15 +238,15 @@ export default {
         type: "post",
         data: {
           OPId: this.appData[scope.$index].OPId,
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "operators/remove",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
           that.disableDelete = false;
-          if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -256,15 +273,15 @@ export default {
         type: "post",
         data: {
           Operators: this.curAppData,
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "operators/update",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
           that.disableUpdate = false;
-          if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -285,14 +302,14 @@ export default {
         data: {
           Index: this.currentPage,
           PageSize: parseInt(this.pageSize),
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "/operators/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -308,19 +325,20 @@ export default {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
           console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
         }
-      });$.ajax({
+      });
+      $.ajax({
         type: "post",
         data: {
           Index: this.currentPage,
           PageSize: parseInt(this.pageSize),
-          token:this.$store.state.usr_token
+          token: this.$store.state.usr_token
         },
         url: "/operators/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          if(d.code ==55){
-            showErrMsg(that,55, 'token验证失效，请重新登录')
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
@@ -328,7 +346,7 @@ export default {
             that.appData = [];
             return;
           }
-        
+
           that.listCount = d.data.Count;
           that.appData = d.data["List"] || [];
         },
