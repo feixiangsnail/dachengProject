@@ -163,7 +163,6 @@
 #applicationPage .handleBox {
   height: 50px;
 }
-
 </style>
 <script>
 import {

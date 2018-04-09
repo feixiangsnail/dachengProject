@@ -3,15 +3,15 @@
       <el-date-picker
             v-model="starttime"
             type="datetime"
-            placeholder="选择日期时间">
+            placeholder="选择开始时间">
       </el-date-picker>
        <el-date-picker
             v-model="endtime"
             type="datetime"
-            placeholder="选择日期时间">
+            placeholder="选择截止时间">
       </el-date-picker>
       关键字：
-      <el-input v-model="keywords" class="keywords"></el-input>
+      <el-input v-model="keywords" class="keywords" placeholder="请输入关键字"></el-input>
       <el-button type="primary" @click="search">搜索</el-button>
   </div>
 </template>
