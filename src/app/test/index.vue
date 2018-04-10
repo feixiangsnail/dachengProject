@@ -1,51 +1,23 @@
 <template>
-<div>
-
-
-  <el-select
-    v-model="value10.id"
-    filterable
-    allow-create
-    default-first-option
-    placeholder="请选择文章标签">
-    <el-option
-      v-for="item in options5"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value">
-    </el-option>
-  </el-select>
-
- <el-button type="primary" @click="print">主要按钮</el-button>
-
-
-
-
-
-  </div>
+<el-collapse v-model="activeNames" @change="handleChange">
+  <el-collapse-item title="一致性 Consistency" name="1">
+    <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+    <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
+  </el-collapse-item>
+ 
+</el-collapse>
 </template>
-
 <script>
-  export default {
-    data() {
-      return {
-        options5: [{
-          value: 'HTML',
-          label: 'HTML'
-        }, {
-          value: 'CSS',
-          label: 'CSS'
-        }, {
-          value: 'JavaScript',
-          label: 'JavaScript'
-        }],
-        value10:{id:'6'}
-      }
-    },
-    methods:{
-        print(){
-            console.log(this.value10,'value10')
-        }
+export default {
+  data() {
+    return {
+      activeNames: ["1"]
+    };
+  },
+  methods: {
+    handleChange(val) {
+      console.log(val);
     }
   }
+};
 </script>

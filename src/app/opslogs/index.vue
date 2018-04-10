@@ -112,11 +112,19 @@ export default {
       var that = this;
       $.ajax({
         type: "post",
-        data: null,
+        data: {
+         
+          token: this.$store.state.usr_token
+        },
         url: "/operators/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
+            that.$router.push({ path: "/login" });
+            return;
+          }
           if (d.code == 99) {
             that.OperatorList = [];
             return;

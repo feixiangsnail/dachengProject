@@ -64,9 +64,9 @@
             </el-table-column>
             <el-table-column label="已有接口列表">
                     <template slot-scope="scope">
-                     <el-select v-model="selectAppId" placeholder="请选择">
+                     <el-select v-model="selectAppId" placeholder="请选择" @change="changeInterface">
                 <el-option  label="请选择" value="" > </el-option>
-                <el-option v-for="item in appData" :label="item.APName" :value="item.APId" @change="chooseIpPort">
+                <el-option v-for="(item,index) in interfaces" :label="item.IName" :value="index" @change="chooseIpPort">
                 </el-option>
               </el-select>
                     </template> 
@@ -123,6 +123,17 @@
             <el-table-column label="应用名称">
                     <template slot-scope="scope">
                       <el-input v-model="curAppData.APName" placeholder="请输入内容"></el-input> 
+                    </template> 
+            </el-table-column>
+
+
+ <el-table-column label="已有接口列表">
+                    <template slot-scope="scope">
+                     <el-select v-model="selectAppId" placeholder="请选择" @change="changeInterface">
+                <el-option  label="请选择" value="" > </el-option>
+                <el-option v-for="(item,index) in interfaces" :label="item.IName" :value="index" @change="chooseIpPort">
+                </el-option>
+              </el-select>
                     </template> 
             </el-table-column>
             <el-table-column  label="应用协议类型" >
@@ -196,8 +207,9 @@ import {
 export default {
   data() {
     return {
-      selectAppId:'',
-      appIds:[],
+      interfaces:[],
+      selectAppId: "",
+      appIds: [],
       disableSearch: false,
       keywords: "",
       starttime: "",
@@ -245,11 +257,12 @@ export default {
       this.getOperatorList();
     }
     this.getAppList();
+    this.getInterfaces()
   },
 
   methods: {
-    chooseIpPort(){
-      console.log(this.selectAppId)
+    chooseIpPort() {
+      console.log(this.selectAppId);
     },
     searchHeaderList() {
       console.log("chaxun");
@@ -270,11 +283,47 @@ export default {
     formatDate(t) {
       return formatDate(parseInt(t.CreateTime));
     },
+    changeInterface(){
+      console.log(this.selectAppId,'selectappid')
+      this.curAppData.Parameter.ip = this.interfaces[this.selectAppId].IIP;
+      this.curAppData.Parameter.port = this.interfaces[this.selectAppId].IPort;
+      
+      this.curAppData.Parameter.path = this.interfaces[this.selectAppId].IPath;
+    
+    },
+    getInterfaces() {
+      let that = this;
+      $.ajax({
+        type: "post",
+        data:  {
+          token: this.$store.state.usr_token
+        },
+        url: "/application/getclientjson",
+        dataType: "json",
+        timeout: 20000,
+        success: function(d) {
+         
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
+            that.$router.push({ path: "/login" });
+            return;
+          }
+          that.interfaces = d.data || [];
+         
+          console.log(d, "interface");
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          showErrMsg(that, textStatus);
+        }
+      });
+    },
     getHistoryIpPath() {
       let that = this;
       $.ajax({
         type: "post",
-        data: null,
+        data: {
+          token: this.$store.state.usr_token
+        },
         url: "/application/gethistory",
         dataType: "json",
         timeout: 20000,
@@ -304,12 +353,14 @@ export default {
     },
     //编辑当前app信息
     editCurApp(scope) {
+      
       this.currentNum = scope.$index;
       this.editDialog = true;
       this.curAppData = deepClone(this.appData[this.currentNum]);
     },
     //关闭弹框
     closeDialog() {
+      this.selectAppId = '';
       this.editDialog = false;
       this.addDialog = false;
       this.curAppData = {
@@ -446,6 +497,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          console.log(d,'ddddd666d6d')
           that.disableSearch = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
@@ -471,11 +523,19 @@ export default {
       var that = this;
       $.ajax({
         type: "post",
-        data: null,
+        data: {
+          opid: this.selectOPId,
+          token: this.$store.state.usr_token
+        },
         url: "/operators/getlist_index",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
+            that.$router.push({ path: "/login" });
+            return;
+          }
           if (d.code == 99) {
             that.OperatorList = [];
             return;

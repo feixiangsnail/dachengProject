@@ -38,7 +38,7 @@
    <div class="selectBottom">
 
 </div>
-    <el-dialog title="新增应用信息" :visible.sync="addDialog" :before-close="closeDialog"  :close-on-click-modal='false'>
+    <el-dialog title="新增服务申请方" :visible.sync="addDialog" :before-close="closeDialog"  :close-on-click-modal='false'>
       <div class="editDg">
         <el-table style="width: 100%" :data="[null]">
             <el-table-column label="服务申请方名称">
