@@ -186,8 +186,8 @@ export default {
     if (this.isSuper) {
       this.getOperatorList();
     }
-    // this.getAppCall();
-    // this.getAppIp();
+    this.getAppCall();
+    this.getAppIp();
     this.getMaxTime();
      this.getCount();
   },
@@ -197,6 +197,7 @@ export default {
       this.getAppCall();
     },
     getOperatorList() {
+      
       var that = this;
       $.ajax({
         type: "post",
@@ -204,10 +205,11 @@ export default {
           opid: this.selectOPId,
           token: this.$store.state.usr_token
         },
-        url: "/operators/getlist_index",
+        url: "/operators/getlist",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
@@ -217,8 +219,8 @@ export default {
             that.OperatorList = [];
             return;
           }
-          console.log(d,'dddd')
-          that.OperatorList = d.data["List"] || [];
+        
+          that.OperatorList = d.data || [];
           console.log(that.OperatorList, "that.OperatorList");
           console.log(that.$store.state.OPId, "that.$store.state.OPId");
         },
@@ -259,6 +261,7 @@ export default {
 
 
     getMaxTime() {
+      
       let that = this;
       $.ajax({
         type: "post",

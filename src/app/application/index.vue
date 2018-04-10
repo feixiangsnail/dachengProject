@@ -527,7 +527,7 @@ export default {
           opid: this.selectOPId,
           token: this.$store.state.usr_token
         },
-        url: "/operators/getlist_index",
+        url: "/operators/getlist",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
@@ -540,7 +540,7 @@ export default {
             that.OperatorList = [];
             return;
           }
-          that.OperatorList = d.data["List"] || [];
+          that.OperatorList = d.data || [];
           console.log(that.OperatorList, "that.OperatorList");
           console.log(that.$store.state.OPId, "that.$store.state.OPId");
         },

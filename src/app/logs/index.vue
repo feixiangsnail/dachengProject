@@ -116,7 +116,7 @@ export default {
          
           token: this.$store.state.usr_token
         },
-        url: "/operators/getlist_index",
+        url: "/operators/getlist",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
@@ -130,7 +130,7 @@ export default {
             return;
           }
            console.log(d,'listddd')
-          that.OperatorList = d.data["List"] || [];
+          that.OperatorList = d.data|| [];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
