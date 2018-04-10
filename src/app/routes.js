@@ -8,7 +8,7 @@ const router = new VueRouter({
             path: '/', name: '', component: resolve => require(['./home/index.vue'], resolve),
             children: [
                 { path: '/', component: resolve => require(['./operator/index.vue'], resolve), name: '服务申请商管理', meta: { requiresAuth: true } },
-                { path: '/index', component: resolve => require(['./operator/index.vue'], resolve), name: '服务申请商管理',  meta: { requiresAuth: true } },
+                { path: '/index', component: resolve => require(['./operator/index.vue'], resolve), name: '服务申请方管理',  meta: { requiresAuth: true } },
                 { path: '/application', component: resolve => require(['./application/index.vue'], resolve), name: '应用管理' },
                 { path: '/logs', component: resolve => require(['./logs/index.vue'], resolve), name: '日志查询' },                
                 { path: '/charts', component: resolve => require(['./charts/index.vue'], resolve), name: '应用统计' },

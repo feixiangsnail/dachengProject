@@ -1,17 +1,31 @@
 <template>
 <div id="operatorPage">
     <p class="tit">
-    服务申请商管理
+    服务申请方管理
   </p>
   <div class="clearfix">
 <el-button @click="addDialog = true;" type="primary"   class="addNewBtn">新增</el-button>
-<search-header :search="searchHeaderList" :starttime="starttime" :endtime="endtime" :keywords="keywords"></search-header>
+ <div class="searchInfo">
+      <el-date-picker
+            v-model="starttime"
+            type="datetime"
+            placeholder="选择开始时间">
+      </el-date-picker>
+       <el-date-picker
+            v-model="endtime"
+            type="datetime"
+            placeholder="选择截止时间">
+      </el-date-picker>
+      关键字：
+      <el-input v-model="keywords" class="keywords" placeholder="请输入关键字"></el-input>
+      <el-button type="primary" :disabled="disableSearch" @click="getOperatorList">搜索</el-button>
+  </div>
   </div>
   
   <el-table :data="appData"  style="width: 100%">
-    <el-table-column prop="OPId" label="运营商ID"></el-table-column>   
-    <el-table-column prop="OPName" label="运营商名称"></el-table-column>
-    <el-table-column prop="OPIntro" label="运营商介绍"> </el-table-column>
+    <el-table-column prop="OPId" label="服务申请方ID"></el-table-column>   
+    <el-table-column prop="OPName" label="服务申请方名称"></el-table-column>
+    <el-table-column prop="OPIntro" label="服务申请方介绍"> </el-table-column>
     <el-table-column prop="CreateTime" :formatter="formatDate"  label="创建时间"> </el-table-column>
     <el-table-column label="操作" width="150">
       
@@ -27,19 +41,19 @@
     <el-dialog title="新增应用信息" :visible.sync="addDialog" :before-close="closeDialog"  :close-on-click-modal='false'>
       <div class="editDg">
         <el-table style="width: 100%" :data="[null]">
-            <el-table-column label="运营商名称">
+            <el-table-column label="服务申请方名称">
                 <template slot-scope="scope">
-                  <el-input v-model="curAppData.OPName" placeholder="请输入运营商名称"></el-input> 
+                  <el-input v-model="curAppData.OPName" placeholder="请输入服务申请方名称"></el-input> 
                 </template> 
             </el-table-column>
-            <el-table-column label="运营商密码">
+            <el-table-column label="服务申请方密码">
                 <template slot-scope="scope">
-                  <el-input type="password" v-model="curAppData.OPPwd" placeholder="请输入运营商密码"></el-input> 
+                  <el-input type="password" v-model="curAppData.OPPwd" placeholder="请输入服务申请方密码"></el-input> 
                 </template> 
             </el-table-column>
-            <el-table-column  label="运营商介绍">
+            <el-table-column  label="服务申请方介绍">
               <template slot-scope="scope">
-                   <el-input v-model="curAppData.OPIntro" placeholder="请输入运营商介绍"></el-input> 
+                   <el-input v-model="curAppData.OPIntro" placeholder="请输入服务申请方介绍"></el-input> 
               </template>
             </el-table-column>
             <el-table-column  label="操作" >
@@ -56,20 +70,20 @@
   <el-dialog title="编辑应用信息" :visible.sync="editDialog" :before-close="closeDialog" :close-on-click-modal='false'>
       <div class="editDg">
         <el-table style="width: 100%" :data="[null]">
-            <el-table-column label="运营商名称">
+            <el-table-column label="服务申请方名称">
                 <template slot-scope="scope">
-                  <el-input v-model="curAppData.OPName" placeholder="请输入运营商名称"></el-input> 
+                  <el-input v-model="curAppData.OPName" placeholder="请输入服务申请方名称"></el-input> 
                 </template> 
             </el-table-column>
             <el-table-column label="密码">
                 <template slot-scope="scope">
-                  <el-input type="password" v-model="curAppData.OPPwd" placeholder="请输入运营商密码"></el-input> 
+                  <el-input type="password" v-model="curAppData.OPPwd" placeholder="请输入服务申请方密码"></el-input> 
                 </template> 
             </el-table-column>
 
-            <el-table-column  label="运营商介绍">
+            <el-table-column  label="服务申请方介绍">
               <template slot-scope="scope">
-                   <el-input v-model="curAppData.OPIntro" placeholder="请输入运营商介绍"></el-input> 
+                   <el-input v-model="curAppData.OPIntro" placeholder="请输入服务申请方介绍"></el-input> 
               </template>
             </el-table-column>
           
@@ -109,6 +123,7 @@ import {
 export default {
   data() {
     return {
+      disableSearch:false,
       keywords: "",
       starttime: "",
       endtime: "",
@@ -132,17 +147,14 @@ export default {
       appData: []
     };
   },
-  components: {
-    SearchHeader: require("../components/searchHeader.vue")
-  },
+ 
   created() {
     this.getOperatorList();
   },
 
   methods: {
-    searchHeaderList() {
-      console.log("chaxun");
-    },
+    
+    
     confirmDelete(scope) {
       let that = this;
       this.$alert("", "是否删除", {
@@ -156,11 +168,11 @@ export default {
     isUser() {
       var pattern = /^\S{3,20}$/g;
       if (this.curAppData.OPName === "") {
-        this.errInfo = "运营商名称不能为空";
+        this.errInfo = "服务申请方名称不能为空";
         return false;
       }
       if (!pattern.test(this.curAppData.OPName)) {
-        this.errInfo = "运营商名称应为3-20个非空白字符";
+        this.errInfo = "服务申请方名称应为3-20个非空白字符";
         return false;
       }
       this.errInfo = "";
@@ -181,7 +193,7 @@ export default {
     },
     //格式化时间
     formatDate(t) {
-      return formatDate(parseInt(t.CreateTime));
+      return formatDate(parseInt(t));
     },
     //跳转到第几页
     changePage(currentPage) {
@@ -208,7 +220,7 @@ export default {
         Token: ""
       };
     },
-    //添加新运营商
+    //添加新服务申请方
     addNewApp() {
       if (!this.isUser()) return;
       if (!this.isPwd()) return;
@@ -273,7 +285,7 @@ export default {
         }
       });
     },
-    //修改选中运营商
+    //修改选中服务申请方
     updateCurApp() {
       if (!this.isUser()) return;
       if (!this.isPwd()) return;
@@ -304,12 +316,20 @@ export default {
         }
       });
     },
-    //获取运营商列表
+    //获取服务申请方列表
     getOperatorList() {
       var that = this;
+
+       this.disableSearch = true;
+      let starttime = new Date(this.starttime).getTime();
+      let endtime = new Date(this.endtime).getTime();
+      console.log(starttime,endtime,'st')
       $.ajax({
         type: "post",
         data: {
+          starttime:starttime,
+          endtime:endtime,
+          key: this.keywords,
           Index: this.currentPage,
           PageSize: parseInt(this.pageSize),
           token: this.$store.state.usr_token
@@ -318,6 +338,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          that.disableSearch = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
@@ -332,39 +353,12 @@ export default {
           that.appData = d.data["List"] || [];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
+          that.disableSearch = false;
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
+          
         }
       });
-      $.ajax({
-        type: "post",
-        data: {
-          Index: this.currentPage,
-          PageSize: parseInt(this.pageSize),
-          token: this.$store.state.usr_token
-        },
-        url: "/operators/getlist_index",
-        dataType: "json",
-        timeout: 20000,
-        success: function(d) {
-          if (d.code == 55) {
-            showErrMsg(that, 55, "token验证失效，请重新登录");
-            that.$router.push({ path: "/login" });
-            return;
-          }
-          if (d.code == 99) {
-            that.appData = [];
-            return;
-          }
-
-          that.listCount = d.data.Count;
-          that.appData = d.data["List"] || [];
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-          console.log(XMLHttpRequest.status, "XMLHttpRequest.status");
-        }
-      });
+     
       // this.$http.p("/operators/getlist_index",{ Index: this.currentPage,PageSize: this.pageSize}).then(function(res){
       //     console.log(res,'res');
       //   })

@@ -67,7 +67,8 @@ export default {
         },
         chooseInterface(){
            
-            this.curInterface = this.interfaces[this.selectInterface];
+            this.curInterface = this.interfaces[this.selectIndex];
+           
         }
     }
 }

@@ -1,127 +1,29 @@
 <template>
-<div>
-
-          <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="changeOperator">
+  <div>
+       <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="changeOperator">
       <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
     </el-option>
   </el-select>
 
-      <div class="chartTitle">
-          应用调用次数
-      </div>
-     <el-table
-      :data="appCall"
-      style="width:100%">
-      <el-table-column
-        prop="_id"
-        label="应用名称"
-       >
-      </el-table-column>
-      <el-table-column
-        prop="count"
-        label="调用次数"
-        >
-      </el-table-column>
-      
-    </el-table>
-
-
-      <div class="chartTitle">
-          TOP10调用次数最高的应用和每个应用中TOP10的IP
-      </div>
-     <el-table
-      :data="appIp"
-      style="width:100%">
-      <el-table-column
-        prop="app"
-        label="应用名称"
-       >
-      </el-table-column>
-      <el-table-column
-        prop="count"
-        label="调用次数"
-        >
-      </el-table-column>
-       <el-table-column
+      <table id="tableExcel" width="100%" border="1" cellspacing="0" cellpadding="0">
+    <tr>
+        <td colspan="2" align="center">应用调用次数</td>
+    </tr>
+    <tr>
+        <td>应用ID</td>
+        <td>调用次数</td>
        
-        label="ip列表"
-        >
-         <template slot-scope="scope">
-                      <el-input v-model="appCall.ips" placeholder="请输入内容"></el-input>  
-                    </template> 
-      </el-table-column>
-
-
-
-
-
-    </el-table>
-
-
-
-
-      <div class="chartTitle">
-          TOP10接口调用时间
-
-      </div>
-     <el-table
-      :data="maxTime"
-      style="width:100%">
-      <el-table-column
-        prop="interface"
-        label="接口"
-       >
-      </el-table-column>
-      <el-table-column
-        prop="callTime"
-        label="调用时间"
-        >
-      </el-table-column>
-      
-    </el-table>
-
-      <div class="chartTitle">
-          总运营，总应用和总调用次数
-      </div>
-     <el-table
-      :data="count"
-      style="width:100%">
-      <el-table-column
-        prop="_id"
-        label="应用ID"
-       >
-      </el-table-column>
-      <el-table-column
-        prop="count"
-        label="调用次数"
-        >
-      </el-table-column>
-      
-    </el-table>
-
-
-
-
-
-
-
-
-    </div>
-  </template>
-<style>
-.chartTitle {
-  margin-top: 10px;
-  width: 100%;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 16px;
-  background: gray;
-}
-</style>
-
-  <script>
+    </tr>
+    <tr v-for = "item in appCall">
+        <td>{{item._id}}</td>
+        <td>{{item.count}}</td>
+        
+    </tr>
+   
+</table>
+  </div>
+</template>
+<script>
 import {
   showErrMsg,
   formatDate,
@@ -132,7 +34,7 @@ import {
 export default {
   data() {
     return {
-      appCall: [null],
+      appCall: [],
       maxTime: [],
       appIp: [],
       count: [],

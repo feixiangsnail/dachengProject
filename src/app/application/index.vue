@@ -15,7 +15,21 @@
   <el-button @click="addDialog = true;" type="primary"  class="addNewBtn">新增</el-button>
   
     </div>
- <search-header :search="searchHeaderList" :starttime="starttime" :endtime="endtime" :keywords="keywords"></search-header>
+ <div class="searchInfo">
+      <el-date-picker
+            v-model="starttime"
+            type="datetime"
+            placeholder="选择开始时间">
+      </el-date-picker>
+       <el-date-picker
+            v-model="endtime"
+            type="datetime"
+            placeholder="选择截止时间">
+      </el-date-picker>
+      关键字：
+      <el-input v-model="keywords" class="keywords" placeholder="请输入关键字"></el-input>
+      <el-button type="primary" :disabled="disableSearch" @click="getAppList">搜索</el-button>
+  </div>
   </div>
  
   <el-table :data="appData" style="width: 100%">
@@ -46,6 +60,15 @@
           <el-table-column label="应用名称">
                     <template slot-scope="scope">
                       <el-input v-model="curAppData.APName" placeholder="请输入内容"></el-input> 
+                    </template> 
+            </el-table-column>
+            <el-table-column label="已有接口列表">
+                    <template slot-scope="scope">
+                     <el-select v-model="selectAppId" placeholder="请选择">
+                <el-option  label="请选择" value="" > </el-option>
+                <el-option v-for="item in appData" :label="item.APName" :value="item.APId" @change="chooseIpPort">
+                </el-option>
+              </el-select>
                     </template> 
             </el-table-column>
             <el-table-column  label="应用协议类型">
@@ -173,6 +196,9 @@ import {
 export default {
   data() {
     return {
+      selectAppId:'',
+      appIds:[],
+      disableSearch: false,
       keywords: "",
       starttime: "",
       endtime: "",
@@ -222,6 +248,9 @@ export default {
   },
 
   methods: {
+    chooseIpPort(){
+      console.log(this.selectAppId)
+    },
     searchHeaderList() {
       console.log("chaxun");
     },
@@ -230,7 +259,7 @@ export default {
       this.$alert("", "是否删除", {
         confirmButtonText: "确定",
         callback: action => {
-          if(action == 'cancel') return;
+          if (action == "cancel") return;
           that.deleteCurApp(scope);
         }
       });
@@ -399,9 +428,15 @@ export default {
     //获取应用列表
     getAppList() {
       var that = this;
+      this.disableSearch = true;
+      let starttime = new Date(this.starttime).getTime();
+      let endtime = new Date(this.endtime).getTime();
       $.ajax({
         type: "post",
         data: {
+          starttime: starttime,
+          endtime: endtime,
+          key: this.keywords,
           OPId: this.selectOPId,
           Index: this.currentPage,
           PageSize: parseInt(this.pageSize),
@@ -411,6 +446,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          that.disableSearch = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
@@ -420,11 +456,12 @@ export default {
             that.appData = [];
             return;
           }
-          console.log();
+
           that.appData = d.data["List"] || [];
           that.listCount = d.data["Count"];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
+          that.disableSearch = false;
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
         }
       });

@@ -23,7 +23,7 @@
       </el-select>
       </div>
  
-   <div id="searchInfo">
+   <div class="searchInfo">
       <el-date-picker
             v-model="starttime"
             type="datetime"
@@ -170,8 +170,8 @@ export default {
     getLogList() {
       var that = this;
       this.disableSearch = true;
-      let starttime = this.formatDate(new Date(this.starttime).getTime());
-      let endtime = this.formatDate(new Date(this.endtime).getTime());
+      let starttime = new Date(this.starttime).getTime();
+      let endtime = new Date(this.endtime).getTime();
 
       let postData = {
         starttime: starttime,
