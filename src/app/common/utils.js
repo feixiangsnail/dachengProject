@@ -1,5 +1,5 @@
 let pagesNum = (document.documentElement.clientHeight - 150) / 60;
-module.exports.pagesNum=parseInt(pagesNum)-3;
+module.exports.pagesNum=parseInt(pagesNum)-5;
 
 export function is_weixn() {
     let ua = navigator.userAgent.toLowerCase();

@@ -34,7 +34,7 @@
     <el-table-column label="操作" width="150">
       <template slot-scope="scope" >       
         <el-button size="mini" @click="editCurApp(scope)">编辑</el-button>
-        <el-button size="mini" type="danger" @click="deleteCurApp(scope)" :disabled="disableDelete">删除</el-button>
+        <el-button size="mini" type="danger" @click="confirmDelete(scope)" :disabled="disableDelete">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -66,8 +66,6 @@
       <el-option v-for="item in ids" :value="item">
     </el-option>
   </el-select>
-
-
                     </template> 
                 </el-table-column>
                 <el-table-column label="端口号">
@@ -227,6 +225,18 @@ export default {
     searchHeaderList() {
       console.log("chaxun");
     },
+    confirmDelete(scope) {
+      let that = this;
+      this.$alert("", "是否删除", {
+        confirmButtonText: "确定",
+        callback: action => {
+          if(action == 'cancel') return;
+          that.deleteCurApp(scope);
+        }
+      });
+
+      //deleteCurApp(scope);
+    },
     //格式化时间
     formatDate(t) {
       return formatDate(parseInt(t.CreateTime));
@@ -321,6 +331,7 @@ export default {
         }
       });
     },
+
     //删除选中应用
     deleteCurApp(scope) {
       var that = this;

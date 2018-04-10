@@ -17,7 +17,7 @@
       
       <template slot-scope="scope" >       
         <el-button size="mini" @click="editCurApp(scope)">编辑</el-button>
-        <el-button size="mini" type="danger" @click="deleteCurApp(scope)" :disabled="disableDelete">删除</el-button>
+        <el-button size="mini" type="danger" @click="confirmDelete(scope)" :disabled="disableDelete">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -97,7 +97,6 @@
   text-align: center;
   color: red;
 }
-
 </style>
 <script>
 import {
@@ -106,6 +105,7 @@ import {
   deepClone,
   pagesNum
 } from "../common/utils.js";
+
 export default {
   data() {
     return {
@@ -142,6 +142,16 @@ export default {
   methods: {
     searchHeaderList() {
       console.log("chaxun");
+    },
+    confirmDelete(scope) {
+      let that = this;
+      this.$alert("", "是否删除", {
+        confirmButtonText: "确定",
+        callback: action => {
+          if(action == 'cancel') return;
+          that.deleteCurApp(scope);
+        }
+      });
     },
     isUser() {
       var pattern = /^\S{3,20}$/g;

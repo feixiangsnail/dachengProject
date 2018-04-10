@@ -11,6 +11,10 @@
       </el-select>
       <el-select v-model="selectAppId" filterable placeholder="请选择" @change="selectApp">
         <el-option
+          label="所有记录"
+          value="">
+        </el-option>
+        <el-option
           v-for="(item,index) in appList"
           :key="index" 
           :label="item.APName"
@@ -19,7 +23,21 @@
       </el-select>
       </div>
  
-  <search-header :search="searchHeaderList" :starttime="starttime" :endtime="endtime" :keywords="keywords"></search-header>
+   <div id="searchInfo">
+      <el-date-picker
+            v-model="starttime"
+            type="datetime"
+            placeholder="选择开始时间">
+      </el-date-picker>
+       <el-date-picker
+            v-model="endtime"
+            type="datetime"
+            placeholder="选择截止时间">
+      </el-date-picker>
+      关键字：
+      <el-input v-model="keywords" class="keywords" placeholder="请输入关键字"></el-input>
+      <el-button type="primary" :disabled="disableSearch" @click="getLogList">搜索</el-button>
+  </div>
  </div>
 
   <el-table :data="logData" style="width: 100%">
@@ -48,18 +66,20 @@ import { showErrMsg, formatDate, pagesNum } from "../common/utils.js";
 export default {
   data() {
     return {
+      disableSearch: false,
       keywords: "",
       starttime: "",
       endtime: "",
       currentPage: 1,
       pageSize: pagesNum,
-      listCount: null,
+      listCount: 1,
       logData: [],
       appList: [],
       isSuper: true,
       selectOPId: "", //选中的运营商token
       OperatorList: [],
-      selectAppId: ""
+      selectAppId: "",
+      isFirst: true
     };
   },
   components: {
@@ -74,9 +94,6 @@ export default {
     this.getAppList();
   },
   methods: {
-    searchHeaderList() {
-      console.log("chaxun");
-    },
     //格式化时间
     formatDate(t) {
       return formatDate(parseInt(t.VisitTime));
@@ -135,29 +152,47 @@ export default {
             return;
           }
           that.appList = d.data["List"] || [];
-          that.selectAppId = d.data["List"][0].APId;
+
           that.currentPage = 1;
-          that.getLogList();
+
+          if (that.isFirst) {
+            that.getLogList();
+            that.isFirst = false;
+          }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
         }
       });
     },
+
+    ///statistics/logs
     getLogList() {
       var that = this;
+      this.disableSearch = true;
+      let starttime = this.formatDate(new Date(this.starttime).getTime());
+      let endtime = this.formatDate(new Date(this.endtime).getTime());
+
+      let postData = {
+        starttime: starttime,
+        endtime: endtime,
+        Index: this.currentPage,
+        PageSize: parseInt(this.pageSize),
+        opid: this.selectOPId,
+        APId: this.selectAppId,
+        token: this.$store.state.usr_token,
+        key: this.keywords
+      };
+      console.log(postData, "postdata");
       $.ajax({
         type: "post",
-        data: {
-          Index: this.currentPage,
-          PageSize: parseInt(this.pageSize),
-          APId: this.selectAppId,
-          token: this.$store.state.usr_token
-        },
-        url: "/applicationrecord/getlist_index",
+        data: postData,
+        url: "/statistics/logs",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          that.disableSearch = false;
+          console.log(d, "dddddsssaa");
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
@@ -171,6 +206,7 @@ export default {
           that.logData = d.data["List"] || [];
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
+          that.disableSearch = false;
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
         }
       });

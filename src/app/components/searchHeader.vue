@@ -16,14 +16,7 @@
   </div>
 </template>
 <style>
-#searchInfo {
-  width: 750px;
-  float: right;
-  height: 50px;
-}
-#searchInfo .keywords {
-  width: 150px;
-}
+
 </style>
 <script>
 export default {

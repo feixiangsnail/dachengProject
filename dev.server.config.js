@@ -11,7 +11,7 @@ function Config(){
     }
 
     for(var i in files){
-        files[i].target ="http://192.168.101.195:23333/"
+        files[i].target ="http://192.168.101.195:2580/"
         files[i].changeOrigin = true;
     }
     return {
