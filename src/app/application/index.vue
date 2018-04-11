@@ -207,7 +207,7 @@ import {
 export default {
   data() {
     return {
-      interfaces:[],
+      interfaces: [],
       selectAppId: "",
       appIds: [],
       disableSearch: false,
@@ -257,7 +257,7 @@ export default {
       this.getOperatorList();
     }
     this.getAppList();
-    this.getInterfaces()
+    this.getInterfaces();
   },
 
   methods: {
@@ -283,33 +283,31 @@ export default {
     formatDate(t) {
       return formatDate(parseInt(t.CreateTime));
     },
-    changeInterface(){
-      console.log(this.selectAppId,'selectappid')
+    changeInterface() {
+      console.log(this.selectAppId, "selectappid");
       this.curAppData.Parameter.ip = this.interfaces[this.selectAppId].IIP;
       this.curAppData.Parameter.port = this.interfaces[this.selectAppId].IPort;
-      
+
       this.curAppData.Parameter.path = this.interfaces[this.selectAppId].IPath;
-    
     },
     getInterfaces() {
       let that = this;
       $.ajax({
         type: "post",
-        data:  {
+        data: {
           token: this.$store.state.usr_token
         },
         url: "/application/getclientjson",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-         
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
           that.interfaces = d.data || [];
-         
+
           console.log(d, "interface");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -353,14 +351,13 @@ export default {
     },
     //编辑当前app信息
     editCurApp(scope) {
-      
       this.currentNum = scope.$index;
       this.editDialog = true;
       this.curAppData = deepClone(this.appData[this.currentNum]);
     },
     //关闭弹框
     closeDialog() {
-      this.selectAppId = '';
+      this.selectAppId = "";
       this.editDialog = false;
       this.addDialog = false;
       this.curAppData = {
@@ -497,7 +494,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d,'ddddd666d6d')
+          console.log(d, "ddddd666d6d");
           that.disableSearch = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
