@@ -193,7 +193,8 @@ export default {
     },
     //格式化时间
     formatDate(t) {
-      return formatDate(parseInt(t));
+      
+      return formatDate(parseInt(t.CreateTime));
     },
     //跳转到第几页
     changePage(currentPage) {
@@ -323,7 +324,7 @@ export default {
        this.disableSearch = true;
       let starttime = new Date(this.starttime).getTime();
       let endtime = new Date(this.endtime).getTime();
-      console.log(starttime,endtime,'st')
+      // console.log(starttime,endtime,'st')
       $.ajax({
         type: "post",
         data: {

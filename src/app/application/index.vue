@@ -6,8 +6,6 @@
   <div class="handleBox clearfix">
     <div class="selectLeft">
           
-
-
     <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="changeOperator">
       <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
     </el-option>
@@ -34,8 +32,9 @@
  
   <el-table :data="appData" style="width: 100%">
     <!-- <el-table-column prop="OPId" label="运营商ID"></el-table-column> -->
-    <el-table-column prop="APId" label="应用ID"></el-table-column>
     <el-table-column prop="APName" label="应用名称"></el-table-column>
+    <el-table-column prop="APId" label="应用ID"></el-table-column>
+    
     <el-table-column prop="Type" label="应用协议类型"> </el-table-column>
     <el-table-column prop="Parameter" label="应用协议参数">
         <el-table-column label="ip地址" prop="Parameter.ip"></el-table-column>
@@ -66,7 +65,7 @@
                     <template slot-scope="scope">
                      <el-select v-model="selectAppId" placeholder="请选择" @change="changeInterface">
                 <el-option  label="请选择" value="" > </el-option>
-                <el-option v-for="(item,index) in interfaces" :label="item.IName" :value="index" @change="chooseIpPort">
+                <el-option v-for="(item,index) in interfaces" :label="item.IName" :value="index">
                 </el-option>
               </el-select>
                     </template> 
@@ -131,7 +130,7 @@
                     <template slot-scope="scope">
                      <el-select v-model="selectAppId" placeholder="请选择" @change="changeInterface">
                 <el-option  label="请选择" value="" > </el-option>
-                <el-option v-for="(item,index) in interfaces" :label="item.IName" :value="index" @change="chooseIpPort">
+                <el-option v-for="(item,index) in interfaces" :label="item.IName" :value="index">
                 </el-option>
               </el-select>
                     </template> 
@@ -261,12 +260,12 @@ export default {
   },
 
   methods: {
-    chooseIpPort() {
-      console.log(this.selectAppId);
-    },
-    searchHeaderList() {
-      console.log("chaxun");
-    },
+    // chooseIpPort() {
+    //   console.log(this.selectAppId);
+    // },
+    // searchHeaderList() {
+    //   console.log("chaxun");
+    // },
     confirmDelete(scope) {
       let that = this;
       this.$alert("", "是否删除", {
@@ -284,7 +283,7 @@ export default {
       return formatDate(parseInt(t.CreateTime));
     },
     changeInterface() {
-      console.log(this.selectAppId, "selectappid");
+     
       this.curAppData.Parameter.ip = this.interfaces[this.selectAppId].IIP;
       this.curAppData.Parameter.port = this.interfaces[this.selectAppId].IPort;
 
@@ -308,7 +307,7 @@ export default {
           }
           that.interfaces = d.data || [];
 
-          console.log(d, "interface");
+       
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus);
@@ -333,7 +332,7 @@ export default {
           }
           that.ids = d.data.Ip || [];
           that.paths = d.data.Path || [];
-          console.log(d, "ddddhistory");
+        
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus);
@@ -392,7 +391,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d, "addnewapp");
+        
           that.disableAdd = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
@@ -494,7 +493,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-          console.log(d, "ddddd666d6d");
+        
           that.disableSearch = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
@@ -538,8 +537,7 @@ export default {
             return;
           }
           that.OperatorList = d.data || [];
-          console.log(that.OperatorList, "that.OperatorList");
-          console.log(that.$store.state.OPId, "that.$store.state.OPId");
+        
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);

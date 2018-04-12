@@ -1,10 +1,31 @@
 <template>
-<div>
-          <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" @change="changeOperator">
+<div id="chart">
+          <el-select v-if="isSuper"  v-model="selectOPId" filterable placeholder="请选择" >
       <el-option v-for="item in OperatorList"  :label="item.OPName" :value="item.OPId">
     </el-option>
   </el-select>
-
+      选择应用:
+      <el-select v-model="selectappids" multiple placeholder="请选择">
+    <el-option
+      v-for="(item,index) in appList"
+          :key="index" 
+          :label="item.APName"
+          :value="item.APId">
+    </el-option>
+  </el-select>
+   <div class="searchInfo">
+      <el-date-picker
+            v-model="starttime"
+            type="datetime"
+            placeholder="选择开始时间">
+      </el-date-picker>
+       <el-date-picker
+            v-model="endtime"
+            type="datetime"
+            placeholder="选择截止时间">
+      </el-date-picker>
+      <el-button type="primary" :disabled="disableSearch" @click="getChartList">搜索</el-button>
+  </div>
       <div class="chartTitle">
           应用调用次数
       </div>
@@ -17,41 +38,20 @@
        >
       </el-table-column>
       <el-table-column
-        prop="count"
-        label="调用次数"
+        prop="SCount"
+        label="调用成功次数"
+        >
+      </el-table-column>
+      <el-table-column
+        prop="ECount"
+        label="调用失败次数"
         >
       </el-table-column>
       
     </el-table>
-
-
-      <div class="chartTitle">
+      <!-- <div class="chartTitle">
           TOP10调用次数最高的应用和每个应用中TOP10的IP
       </div>
-     <!-- <el-table
-      :data="appIp"
-      style="width:100%">
-      <el-table-column
-        prop="name"
-        label="应用名称"
-       >
-      </el-table-column>
-      
-       <el-table-column
-       prop="ips"
-        label="ip列表"
-        >
-         <template slot-scope="scope">
-                      <el-input v-model="appIp.ips" placeholder="请输入内容"></el-input>  
-                    </template> 
-      </el-table-column>
-
-
-
-
-
-    </el-table> -->
-
      <table id="tableExcel" width="100%" border="1" cellspacing="0" cellpadding="0">
     
     <tr style="height:50px;background:#cde9ff">
@@ -65,7 +65,6 @@
         <td>{{item.name? item.name.Call:item.name}}</td>
        
         <td>
-
 <el-collapse v-model="item.name? item.name.APName:item.name" >
   <el-collapse-item  :name="item.name? item.name.APName:item.name">
     <div v-for = 'i in item.ips'>{{i}}</div>
@@ -73,24 +72,18 @@
   </el-collapse-item>
  
 </el-collapse>
-
-
-
         </td>
     </tr>
    
-</table>
-
-
-      <div class="chartTitle">
+</table> -->
+      <!-- <div class="chartTitle">
           TOP10接口调用时间
-
       </div>
      <el-table
       :data="maxTime"
       style="width:100%">
       <el-table-column
-        prop="_id"
+        prop="APName"
         label="接口"
        >
       </el-table-column>
@@ -100,27 +93,26 @@
         >
       </el-table-column>
       
-    </el-table>
-
+    </el-table> -->
       <div class="chartTitle">
-          总运营，总应用和总调用次数
+        系统基础信息
       </div>
      <el-table
       :data="count"
       style="width:100%">
       <el-table-column
         prop="OPCount"
-        label="总运营调用次数"
+        label="总服务申请方"
        >
       </el-table-column>
       <el-table-column
         prop="APPCount"
-        label="总应用调用次数"
+        label="总应用数量"
         >
       </el-table-column>
       <el-table-column
         prop="Count"
-        label="月总调用次数"
+        label="月调用次数"
         >
       </el-table-column>
       <el-table-column
@@ -129,13 +121,6 @@
         >
       </el-table-column>
     </el-table>
-
-
-
-
-
-
-
     </div>
   </template>
 <style>
@@ -158,7 +143,6 @@
   background: gray;
 }
 </style>
-
   <script>
 import {
   showErrMsg,
@@ -170,6 +154,11 @@ import {
 export default {
   data() {
     return {
+      disableSearch:false,
+      selectappids: [],
+      appList: [],
+      starttime: "",
+      endtime: "",
       activeNames: ["1"],
       appCall: [null],
       maxTime: [],
@@ -182,26 +171,59 @@ export default {
   created() {
     this.isSuper = this.$store.state.is_super;
     this.selectOPId = this.$store.state.OPId;
-
     if (this.isSuper) {
       this.getOperatorList();
     }
+    this.getAppList();
     this.getAppCall();
-    this.getAppIp();
-    this.getMaxTime();
-     this.getCount();
+    // this.getAppIp();
+    // this.getMaxTime();
+    this.getCount();
   },
-
   methods: {
+    getAppList() {
+      var that = this;
+      $.ajax({
+        type: "post",
+        data: {
+          opid: this.selectOPId,
+          token: this.$store.state.usr_token
+        },
+        url: "/application/getlist",
+        dataType: "json",
+        timeout: 20000,
+        success: function(d) {
+          if (d.code == 55) {
+            showErrMsg(that, 55, "token验证失效，请重新登录");
+            that.$router.push({ path: "/login" });
+            return;
+          }
+          if (d.code == 99) {
+            that.selectappids = []
+            that.appList = [];
+            return;
+          }
+          that.appList = d.data["List"] || [];
+          console.log(d,'dddlist')
+          // that.currentPage = 1;
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
+        }
+      });
+    },
+    getChartList() {
+      this.getAppCall();
+      this.getCount();
+    },
     changeOperator() {
       this.getAppCall();
     },
     getOperatorList() {
-      
       var that = this;
       $.ajax({
         type: "post",
-        data:  {
+        data: {
           opid: this.selectOPId,
           token: this.$store.state.usr_token
         },
@@ -209,7 +231,6 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
-
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
@@ -219,10 +240,9 @@ export default {
             that.OperatorList = [];
             return;
           }
-        
           that.OperatorList = d.data || [];
-          console.log(that.OperatorList, "that.OperatorList");
-          console.log(that.$store.state.OPId, "that.$store.state.OPId");
+          // console.log(that.OperatorList, "that.OperatorList");
+          // console.log(that.$store.state.OPId, "that.$store.state.OPId");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
@@ -246,22 +266,15 @@ export default {
             that.$router.push({ path: "/login" });
             return;
           }
-
           that.count = d.data || [];
-          console.log(d, "that.count");
+          // console.log(d, "that.count");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus);
         }
       });
     },
-
-
-
-
-
     getMaxTime() {
-      
       let that = this;
       $.ajax({
         type: "post",
@@ -279,14 +292,13 @@ export default {
             return;
           }
           that.maxTime = d.data || [];
-          console.log(that.maxTime, "maxTime");
+          // console.log(that.maxTime, "maxTime");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus);
         }
       });
     },
-
     getAppIp() {
       let that = this;
       $.ajax({
@@ -305,8 +317,7 @@ export default {
             return;
           }
           that.appIp = d.data.app || [];
-
-          console.log(that.appIp, d, "appip");
+          // console.log(that.appIp, d, "appip");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus);
@@ -314,10 +325,18 @@ export default {
       });
     },
     getAppCall() {
+   
+  
       let that = this;
+      this.disableSearch = true;
+      let starttime = new Date(this.starttime).getTime();
+      let endtime = new Date(this.endtime).getTime();
       $.ajax({
         type: "post",
         data: {
+          selectappids:JSON.stringify(this.selectappids),
+          starttime: starttime,
+          endtime: endtime,
           opid: this.selectOPId,
           token: this.$store.state.usr_token
         },
@@ -325,15 +344,18 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+          that.disableSearch = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });
             return;
           }
-          that.appCall = d;
+        that.appCall = d||[];
+          console.log(that.appCall,'appcall')
           console.log(d, "chart");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
+          that.disableSearch = false;
           showErrMsg(that, textStatus);
         }
       });

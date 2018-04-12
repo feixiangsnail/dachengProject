@@ -1,23 +1,48 @@
 <template>
-<el-collapse v-model="activeNames" @change="handleChange">
-  <el-collapse-item title="一致性 Consistency" name="1">
-    <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-    <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-  </el-collapse-item>
- 
-</el-collapse>
+<div>
+
+  <el-select v-model="value5" multiple placeholder="请选择">
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value">
+    </el-option>
+  </el-select>
+<el-button @click="show">dianwo</el-button>
+    
+</div>
 </template>
+
 <script>
-export default {
-  data() {
-    return {
-      activeNames: ["1"]
-    };
-  },
-  methods: {
-    handleChange(val) {
-      console.log(val);
+  export default {
+    data() {
+      return {
+        options: [{
+          value: '选项1',
+          label: '黄金糕'
+        }, {
+          value: '选项2',
+          label: '双皮奶'
+        }, {
+          value: '选项3',
+          label: '蚵仔煎'
+        }, {
+          value: '选项4',
+          label: '龙须面'
+        }, {
+          value: '选项5',
+          label: '北京烤鸭'
+        }],
+        value5: [],
+        value11: []
+      }
+    },
+    methods:{
+      show(){
+        console.log(this.value5,'value5')
+      }
     }
+
   }
-};
 </script>

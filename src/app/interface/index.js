@@ -58,7 +58,7 @@ export default {
                   
                 },
                 error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    alert(222)
+                  
                     that.callResult = errorThrown;
                    
                 }

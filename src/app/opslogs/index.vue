@@ -41,16 +41,76 @@
  </div>
 
   <el-table :data="logData" style="width: 100%">
-    <el-table-column prop="OPId" label="运营商ID"></el-table-column>
-    <el-table-column prop="APId" label="应用ID"></el-table-column>    
+    <!-- <el-table-column prop="OPName" label="运营商名称"></el-table-column> -->
+    <el-table-column prop="APName" label="应用名称"></el-table-column>    
     <el-table-column prop="Type" label="应用协议类型"> </el-table-column>
     <el-table-column prop="VisitTime" :formatter="formatDate" label="访问时间"></el-table-column>
     <el-table-column prop="Ip"  label="调用者IP"></el-table-column>
     <el-table-column prop="Port"  label="调用者端口"></el-table-column>    
+    <el-table-column prop="Cost"  label="调用时长（毫秒）"></el-table-column>
+      <el-table-column label="操作" width="150">
+    <template slot-scope="scope" >       
+      <el-button  @click="showDetail(scope)">查看</el-button>
+      
+    </template>
+
+
+
+  </el-table-column>
   </el-table>
+   <el-dialog  v-if="dialogVisible" :visible.sync="dialogVisible" width="30%">
+  
   <div>
-        
+    <p class="tit tit2"> 请求参数</p>  
+    <p v-for="(value,key,index) in selectLog.row.Query">
+     <span v-if=" key != 'picture' ">
+          {{key}}:{{value}}
+         </span>
+         <span v-else>
+          <img  :src=" 'data:image/png;base64,' + value" alt="">
+          
+         </span>
+    </p>
   </div>
+
+ <div>
+  
+   <p class="tit tit2"> 返回结果</p>  
+   <p v-for="(value,key,index) in selectLog.row.Result">
+    
+      <span v-if=" key != 'result' ">
+        <span v-if=" key != 'picture' ">
+          {{key}}:{{value}}
+         </span>
+         <span v-else>
+          <img  :src=" 'data:image/png;base64,' + value" alt="">
+          
+         </span>
+         
+        </span> 
+        
+      
+       
+        <span v-else>
+          {{key}}:
+          <span>
+            {{value[0]}}
+          </span>
+        </span>
+      
+    </p>
+  </div>
+
+</el-dialog>
+
+
+
+
+
+
+
+
+
 <el-pagination background v-show="listCount" layout="prev, pager, next" :total="listCount"
 @current-change="changePage" :current-page="currentPage" :page-size="pageSize"
 ></el-pagination>
@@ -66,6 +126,8 @@ import { showErrMsg, formatDate, pagesNum } from "../common/utils.js";
 export default {
   data() {
     return {
+      selectLog: "",
+      dialogVisible: false,
       disableSearch: false,
       keywords: "",
       starttime: "",
@@ -94,6 +156,33 @@ export default {
     this.getAppList();
   },
   methods: {
+    showDetail(scope) {
+      this.dialogVisible = true;
+      this.selectLog = scope;
+
+      if (typeof this.selectLog.row.Query == "string") {
+        try {
+          this.selectLog.row.Query = JSON.parse(this.selectLog.row.Query);
+        } catch (error) {}
+      }
+      try {
+        if (this.selectLog.row.Query.p1)
+          this.selectLog.row.Query.picture = this.selectLog.row.Query.p1;
+        delete this.selectLog.row.Query.p1;
+      } catch (e) {}
+
+      if (typeof this.selectLog.row.Result == "string") {
+        try {
+          this.selectLog.row.Result = JSON.parse(this.selectLog.row.Result);
+        } catch (error) {}
+      }
+
+      try {
+        if (this.selectLog.row.Result.result[0].data.XP)
+          this.selectLog.row.Result.picture = this.selectLog.row.Result.result[0].data.XP;
+        delete this.selectLog.row.Result.result[0].data.XP;
+      } catch (e) {}
+    },
     //格式化时间
     formatDate(t) {
       return formatDate(parseInt(t.VisitTime));
@@ -113,7 +202,6 @@ export default {
       $.ajax({
         type: "post",
         data: {
-         
           token: this.$store.state.usr_token
         },
         url: "/operators/getlist",
@@ -142,10 +230,10 @@ export default {
       $.ajax({
         type: "post",
         data: {
-          OPId: this.selectOPId,
+          opid: this.selectOPId,
           token: this.$store.state.usr_token
         },
-        url: "/application/getlist_index",
+        url: "/application/getlist",
         dataType: "json",
         timeout: 20000,
         success: function(d) {
@@ -187,11 +275,11 @@ export default {
         Index: this.currentPage,
         PageSize: parseInt(this.pageSize),
         opid: this.selectOPId,
-        APId: this.selectAppId,
+        apid: this.selectAppId,
         token: this.$store.state.usr_token,
         key: this.keywords
       };
-      console.log(postData, "postdata");
+
       $.ajax({
         type: "post",
         data: postData,
@@ -200,7 +288,7 @@ export default {
         timeout: 20000,
         success: function(d) {
           that.disableSearch = false;
-          console.log(d, "dddddsssaa");
+
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
             that.$router.push({ path: "/login" });

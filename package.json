@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "babel-polyfill": "^6.23.0",
+    "gulp-webserver": "^0.9.1",
     "open-browser-webpack-plugin": "^0.0.5",
     "vuex": "^2.3.1"
   }

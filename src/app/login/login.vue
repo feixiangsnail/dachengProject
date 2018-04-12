@@ -3,7 +3,7 @@
       <div class="logo" @click="clearCookie('usr_token')">
       </div>
     <p class="loginTitle">
-        身份认证平台
+        通道认证平台
     </p>
     <div class="loginArea">
         <div class="loginCont">
