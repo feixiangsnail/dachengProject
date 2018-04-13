@@ -34,11 +34,11 @@
         <td>服务申请方</td>
         <td>应用名称</td>        
     </tr>
-    <tr v-for="i in cloneOperatorList" style="height:50px">
-        <td>{{i.OPName}}</td>
+    <tr v-for="i in operatorList" style="height:50px">
+        <td>服务商1</td>
         <td>
           <el-select v-model="i.selectAppList" multiple placeholder="请选择" style="width:100%">
-             <el-option v-for="(item,index) in i.appList" :value="item.APName" ></el-option>
+             <el-option v-for="(item,index) in i.appList" :label="item.appName" :value="index"></el-option>
 
            </el-select>
           </td>             
@@ -47,8 +47,11 @@
 
 <div slot="footer" class="dialog-footer tc">
     
-    <!-- <el-button type="primary" @click="saveSelectApp">保存</el-button> -->
+    <el-button type="primary" @click="saveSelectApp">保存</el-button>
   </div>
+
+
+
 
 </el-dialog>
 
@@ -83,35 +86,33 @@
         
        
     </tr>
-    <tr v-for="(i,index) in formatApps" >
+    <tr v-for="i in 3" >
+        <td>服务商1</td>
+        <td>应用1</td>
+
+          <td >总调用次数</td>
+        <td >失败次数</td>
+        <td >成功次数</td>  
+
+        <td v-if="isweek">总调用次数（周）</td>
+        <td v-if="isweek">失败次数（周）</td>
+        <td v-if="isweek">成功次数（周）</td>
         
-        <td :rowspan="i.len" v-if="(formatApps[index-1]&&(formatApps[index-1].OPName!==i.OPName))">{{i.OPName}}</td>
-        <td v-else-if="index == 0" :rowspan="i.len">{{i.OPName}}</td>
-        <td>{{i.APName}}</td>
+         <td v-if="isMonth">总调用次数（月）</td>
+        <td v-if="isMonth">失败次数（月）</td>
+        <td v-if="isMonth">成功次数（月）</td>
 
-        <td >{{i.Count}}</td>
-        <td >{{i.SCount}}</td>
-        <td >{{i.ECount}}</td>  
+         <td v-if="isSeason">总调用次数（季）</td>
+        <td v-if="isSeason">失败次数（季）</td>
+        <td v-if="isSeason">成功次数（季）</td>
 
-        <td v-if="isweek">{{i.WCount}}</td>
-        <td v-if="isweek">{{i.WSCount}}</td>
-        <td v-if="isweek">{{i.WECount}}</td>
-        
-        <td v-if="isMonth">{{i.MCount}}</td>
-        <td v-if="isMonth">{{i.MSCount}}</td>
-        <td v-if="isMonth">{{i.MECount}}</td>
+         <td v-if="isHalfYear">总调用次数（半年）</td>
+        <td v-if="isHalfYear">失败次数（半年）</td>
+        <td v-if="isHalfYear">成功次数（半年）</td>
 
-        <td v-if="isSeason">{{i.QCount}}</td>
-        <td v-if="isSeason">{{i.QSCount}}</td>
-        <td v-if="isSeason">{{i.QECount}}</td>
-
-        <td v-if="isHalfYear">{{i.HCount}}</td>
-        <td v-if="isHalfYear">{{i.HSCount}}</td>
-        <td v-if="isHalfYear">{{i.HECount}}</td>
-
-        <td v-if="isYear">{{i.YCount}}</td>
-        <td v-if="isYear">{{i.YSCount}}</td>
-        <td v-if="isYear">{{i.YECount}}</td>    
+         <td v-if="isYear">总调用次数（年）</td>
+        <td v-if="isYear">失败次数（年）</td>
+        <td v-if="isYear">成功次数（年）</td>    
 
        
     </tr>
@@ -141,49 +142,46 @@ export default {
       isMonth: false,
       isSeason: false,
       isHalfYear: false,
-      isYear: false, 
-      cloneOperatorList:[],
-      isFirst:true,
-      // OperatorList: [
-      //   {
-      //     opName: "",
-      //     selectAppList: [],
-      //     appList: [
-      //       {
-      //         appName: "weixin",
-      //         Count: [
-      //           { WCount: 0, WSCount: 0, WECount: 0 },
-      //           { MCount: 0, MSCount: 0, MECount: 0 },
-      //           { QCount: 0, QSCount: 0, QECount: 0 },
-      //           { HCount: 0, HSCount: 0, HECount: 0 },
-      //           { YCount: 0, YSCount: 0, YECount: 0 }
-      //         ]
-      //       },
-      //       {
-      //         appName: "douban",
-      //         Count: [
-      //           { WCount: 0, WSCount: 0, WECount: 0 },
-      //           { MCount: 0, MSCount: 0, MECount: 0 },
-      //           { QCount: 0, QSCount: 0, QECount: 0 },
-      //           { HCount: 0, HSCount: 0, HECount: 0 },
-      //           { YCount: 0, YSCount: 0, YECount: 0 }
-      //         ]
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     opName: "",
-      //     selectAppList: [],
-      //     appList: []
-      //   },
-      //   {
-      //     opName: "",
-      //     selectAppList: [],
-      //     appList: []
-      //   }
-      // ],
-      formatApps:[],
-      formatOperators:[],
+      isYear: false,
+
+      operatorList: [
+        {
+          opName: "",
+          selectAppList: [],
+          appList: [
+            {
+              appName: "weixin",
+              Count: [
+                { WCount: 0, WSCount: 0, WECount: 0 },
+                { MCount: 0, MSCount: 0, MECount: 0 },
+                { QCount: 0, QSCount: 0, QECount: 0 },
+                { HCount: 0, HSCount: 0, HECount: 0 },
+                { YCount: 0, YSCount: 0, YECount: 0 }
+              ]
+            },
+            {
+              appName: "douban",
+              Count: [
+                { WCount: 0, WSCount: 0, WECount: 0 },
+                { MCount: 0, MSCount: 0, MECount: 0 },
+                { QCount: 0, QSCount: 0, QECount: 0 },
+                { HCount: 0, HSCount: 0, HECount: 0 },
+                { YCount: 0, YSCount: 0, YECount: 0 }
+              ]
+            }
+          ]
+        },
+        {
+          opName: "",
+          selectAppList: [],
+          appList: []
+        },
+        {
+          opName: "",
+          selectAppList: [],
+          appList: []
+        }
+      ],
       dialogVisible: false,
       starttime: "",
       endtime: "",
@@ -196,17 +194,15 @@ export default {
   created() {
     this.isSuper = this.$store.state.is_super;
     this.selectOPId = this.$store.state.OPId;
-    if (this.isSuper) {
-     // this.getInitData();
-     this.searchAll();
-    }
+    // if (this.isSuper) {
+    // }
   },
   methods: {
     chooseDateType(i) {
       let tempPos = this.selectDateType.indexOf(i);
       if (tempPos != -1) this.selectDateType.splice(tempPos, 1);
       else this.selectDateType.push(i);
-      this.showSelect();
+      this.showSelect()
     },
     saveSelectApp() {
       console.log(this.operatorList);
@@ -217,81 +213,9 @@ export default {
       console.log("open");
     },
     reset() {
-      // var that = this;
-      // this.selectDateType = ["周"];
-      // this.showSelect();
-      this.$router.go(0);
-    },
-    searchAll(){
-      this.formatApps = [];
-      let that = this;
-      let searchData = [];
-      let starttime = new Date(this.starttime).getTime()
-      let endtime = new Date(this.endtime).getTime()
-      this.cloneOperatorList.forEach((v)=>{
-        if(v.selectAppList.length>0){
-          searchData.push({
-           
-            OPName:v.OPName,
-            selectAppList:v.selectAppList
-          })
-        }
-      })
-      console.log(searchData,'searchdata');
-      $.ajax({
-        type: "post",
-        data:{
-          starttime:starttime,
-          endtime:endtime,
-          operatorList:JSON.stringify(searchData)
-        },
-        url: "/statistics/statement_params",
-        dataType: "json",
-        timeout: 20000,
-        success: function(d) {
-          if (d.code == 55) {
-            showErrMsg(that, 55, "token验证失效，请重新登录");
-            that.$router.push({ path: "/login" });
-            return;
-          }
-          if (d.code == 99) {
-            that.OperatorList = [];
-            return;
-          }
-          that.OperatorList = d.data || [];
-          
-that.OperatorList.forEach((v)=>{
-  that.formatOperators.push({
-    len:v.appList.length,
-    OPName:v.OPName
-  })
-  v.appList.forEach(x=>{
-    x.len = v.appList.length,
-    x.OPName = v.OPName
-    that.formatApps.push(x);
-  })
- 
-
-
-})
-
-
-         console.log(that.formatOperators,'that.formatOperators')
-
-          if(that.isFirst){
-              that.cloneOperatorList = deepClone(that.OperatorList);
-              that.isFirst = false;
-          }
-          
-          console.log(d, "operatorlist");
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
-        }
-      });
-    },
-    getInitData() {
-      let that = this;
+      var that = this;
+      this.selectDateType = ["周"];
+      this.showSelect();
       $.ajax({
         type: "post",
         data: {
@@ -312,7 +236,6 @@ that.OperatorList.forEach((v)=>{
             return;
           }
           that.OperatorList = d.data || [];
-         
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
@@ -325,7 +248,10 @@ that.OperatorList.forEach((v)=>{
       this.isSeason = this.selectDateType.indexOf("季") != -1;
       this.isHalfYear = this.selectDateType.indexOf("半年") != -1;
       this.isYear = this.selectDateType.indexOf("年") != -1;
-      
+      console.log(this.selectDateType);
+    },
+    searchAll(){
+      console.log('searchAll')
     }
   }
 };

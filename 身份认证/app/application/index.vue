@@ -283,6 +283,7 @@ export default {
       return formatDate(parseInt(t.CreateTime));
     },
     changeInterface() {
+     
       this.curAppData.Parameter.ip = this.interfaces[this.selectAppId].IIP;
       this.curAppData.Parameter.port = this.interfaces[this.selectAppId].IPort;
 
@@ -305,6 +306,8 @@ export default {
             return;
           }
           that.interfaces = d.data || [];
+
+       
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus);
@@ -329,6 +332,7 @@ export default {
           }
           that.ids = d.data.Ip || [];
           that.paths = d.data.Path || [];
+        
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus);
@@ -387,6 +391,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+        
           that.disableAdd = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
@@ -488,6 +493,7 @@ export default {
         dataType: "json",
         timeout: 20000,
         success: function(d) {
+        
           that.disableSearch = false;
           if (d.code == 55) {
             showErrMsg(that, 55, "token验证失效，请重新登录");
@@ -531,6 +537,7 @@ export default {
             return;
           }
           that.OperatorList = d.data || [];
+        
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           showErrMsg(that, textStatus, "请求失败" + XMLHttpRequest.status);
