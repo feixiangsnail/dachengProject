@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="clearfix">
-        <div class="logoTitle" @click="toTest">通道认证平台</div>
+        <div class="logoTitle" @click="toTest">身份认证管理系统</div>
         <div class="headRight clearfix">
               <!-- <el-input placeholder="请输入内容"  prefix-icon="el-icon-search" v-model="hSearch">
             </el-input> -->

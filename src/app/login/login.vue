@@ -3,7 +3,7 @@
       <div class="logo" @click="clearCookie('usr_token')">
       </div>
     <p class="loginTitle">
-        通道认证平台
+        身份认证管理系统
     </p>
     <div class="loginArea">
         <div class="loginCont">
@@ -168,7 +168,7 @@ export default {
   user-select: none;
 }
 .logo {
-  background: url(../../assets/img/logo-2.png) no-repeat center;
+  background: url(../../assets/img/logo-1.png) no-repeat center;
   background-size: 100% 100%;
   width: 80px;
   height: 80px;

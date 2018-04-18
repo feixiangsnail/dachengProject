@@ -1,5 +1,5 @@
 <template>
-    <div id="searchInfo">
+    <div>
       <el-date-picker
             v-model="starttime"
             type="datetime"

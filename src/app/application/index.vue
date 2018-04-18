@@ -17,11 +17,13 @@
       <el-date-picker
             v-model="starttime"
             type="datetime"
+            :editable = "false"
             placeholder="选择开始时间">
       </el-date-picker>
        <el-date-picker
             v-model="endtime"
             type="datetime"
+            :editable = "false"
             placeholder="选择截止时间">
       </el-date-picker>
       关键字：

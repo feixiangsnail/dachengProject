@@ -12,12 +12,12 @@ const router = new VueRouter({
                 { path: '/application', component: resolve => require(['./application/index.vue'], resolve), name: '应用管理' },
                 { path: '/logs', component: resolve => require(['./logs/index.vue'], resolve), name: '日志查询' },                
                 { path: '/charts', component: resolve => require(['./charts/index.vue'], resolve), name: '应用统计' },
-                { path: '/interface', component: resolve => require(['./interface/index.vue'], resolve), name: '接口管理' },
+                // { path: '/interface', component: resolve => require(['./interface/index.vue'], resolve), name: '接口管理' },
                 { path: '/opsLogs', component: resolve => require(['./opslogs/index.vue'], resolve), name: '运维日志' }
             ]
         },
         { path: '/login', component: resolve => require(['./login/login.vue'], resolve), name: '登录' },
-        { path: '/signup', component: resolve => require(['./login/signup.vue'], resolve), name: '注册' },
+        // { path: '/signup', component: resolve => require(['./login/signup.vue'], resolve), name: '注册' },
         { path: '/test', component: resolve => require(['./test/index.vue'], resolve), name: '测试页' }
         
     ]

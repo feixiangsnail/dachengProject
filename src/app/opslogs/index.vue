@@ -27,11 +27,13 @@
       <el-date-picker
             v-model="starttime"
             type="datetime"
+            :editable = "false"
             placeholder="选择开始时间">
       </el-date-picker>
        <el-date-picker
             v-model="endtime"
             type="datetime"
+            :editable = "false"
             placeholder="选择截止时间">
       </el-date-picker>
       关键字：
@@ -53,9 +55,6 @@
       <el-button  @click="showDetail(scope)">查看</el-button>
       
     </template>
-
-
-
   </el-table-column>
   </el-table>
    <el-dialog  v-if="dialogVisible" :visible.sync="dialogVisible" width="30%">
@@ -88,9 +87,6 @@
          </span>
          
         </span> 
-        
-      
-       
         <span v-else>
           {{key}}:
           <span>
@@ -102,15 +98,6 @@
   </div>
 
 </el-dialog>
-
-
-
-
-
-
-
-
-
 <el-pagination background v-show="listCount" layout="prev, pager, next" :total="listCount"
 @current-change="changePage" :current-page="currentPage" :page-size="pageSize"
 ></el-pagination>
